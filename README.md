@@ -1,13 +1,24 @@
-# DuneAI
+# DuneAI: AI Orchestration Framework
 
-DuneAI offers a powerful framework for generating dynamic stories using various AI models. This README provides a comprehensive overview of how to use and extend the DuneAI project.
+DuneAI is a highly opinionated AI framework designed for TypeScript, focusing on ease of use and advanced AI orchestration. It leverages runtime interpolation, multi-model support, and lifecycle hooks to make complex AI interactions simple and efficient.
 
 ## Table of Contents
 
 - [Usage](#usage)
-- [Middleware](#middleware)
-- [Adapters](#adapters)
-- [Types](#types)
+- [Core Components](#core-components)
+  - [Prompts](#prompts)
+  - [Dynamics](#dynamics)
+  - [ImportPrompts and CreateDynamic](#importprompts-and-createdynamic)
+- [Advanced Features](#advanced-features)
+  - [Context and Generations stored in State](#context-and-generations-stored-in-state)
+  - [Chain of Thought (COT) and Tree of Thought (TOT)](#chain-of-thought-cot-and-tree-of-thought-tot)
+  - [Iteration](#iteration)
+  - [Spice (Runtime Prompt Pre-processing Snippets)](#spice-runtime-prompt-pre-processing-snippets)
+- [Utilities](#utilities)
+  - [Adapters](#adapters)
+  - [Factories](#factories)
+  - [Observability with WORM](#observability-with-worm)
+- [Upcoming Features](#upcoming-features)
 - [Contribution Guidelines](#contribution-guidelines)
 - [License](#license)
 
@@ -99,111 +110,81 @@ Add your prompts as Mustache files in the `prompts` directory and use them in yo
    })();
    ```
 
-### Logging and Debugging
+## Core Components
 
-Customize logging by defining your `Logger` interface in `./middleware/logger.ts`.
+### Prompts
 
-### Known Issues and Troubleshooting
+Prompts are templates used to generate content. They can be created using Mustache files and imported using the `importPrompts` utility.
 
-- **Loading models or obtaining AI responses:** Ensure API keys are configured correctly.
-- **Script execution errors:** Check logs for error messages and ensure all dependencies are installed.
+### Dynamics
 
-## Middleware
+Dynamics orchestrate the flow of prompts and manage the context and state. They can be of type "chainOfThought" or "treeOfThought".
 
-Middleware in DuneAI provides modular enhancements to the data flow and processing interactions.
+### ImportPrompts and CreateDynamic
 
-### Logger Middleware
-
-The Logger middleware offers a standardized approach to logging throughout the application. By default, it uses the console but can be customized to use any logging framework.
-
-### Custom Middleware
-
-Create additional middleware to handle concerns like authentication, request/response transformation, rate limiting, and more.
-
-## Adapters
-
-Adapters facilitate communication with various AI services and platforms, enabling dynamic content generation.
-
-### Available Adapters
-
-- **OpenAI**: Connects to the OpenAI API for text generation.
-- **GPT4All**: Interfaces with the GPT-4-All models for local or custom text generation.
-- **SDWebUI**: Integrates with Stable Diffusion Web UI for image generation.
-
-### Unified `ask` Method
-
-The unified `ask` method routes requests to the appropriate adapter based on the model key, providing a consistent interface for generating content.
+These utilities are used to import prompts and create dynamic structures.
 
 ```typescript
-import * as gpt4all from "./gpt4all";
-import * as openai from "./openai";
-import * as sdwebui from "./sdwebui";
+import { importPrompts, createDynamic } from 'duneai';
 
-export const ADAPTERS = {
-  GPT4ALL: gpt4all,
-  OPENAI: openai,
-  SDWEBUI: sdwebui,
-};
+const { Introduction, Paragraph } = importPrompts([
+  'prompts/Introduction.prompt',
+  'prompts/Paragraph.prompt'
+]);
 
-export const MODELS = {
-  GPT_FOUR: { model: "gpt-4", adapter: "OPENAI" },
-  GPT_THREE: { model: "gpt-3.5-turbo", adapter: "OPENAI" },
-  MISTRAL_7B: { model: "mistral-7b-openorca.gguf.q4_0", adapter: "GPT4ALL" },
-  ORCA_MINI_3B: { model: "orca-mini-3b-gguf.q4_0", adapter: "GPT4ALL" },
-  LLAMA3: { model: "Meta-Llama-3-8B-Instruct.Q4_0.gguf", adapter: "GPT4ALL" },
-  SD: { model: "sd", adapter: "SDWEBUI" },
-} as const;
-
-export async function ask(
-  prompt: string | Record<string, any>,
-  modelKey: keyof typeof MODELS,
-  options?: any,
-) {
-  const adapterKey = MODELS[modelKey].adapter;
-  const model = MODELS[modelKey].model;
-  const adapter = ADAPTERS[adapterKey];
-  return adapter.ask(prompt, { model, ...options });
-}
+const dynamic = createDynamic({
+  name: 'Story',
+  kind: 'chainOfThought',
+  prompts: [{ Introduction }, { Paragraph }]
+});
 ```
 
-## Types
+## Advanced Features
 
-Defines the various types and interfaces used throughout the project to ensure type safety and consistency.
+### Context and Generations stored in State
 
-### AIModel
+DuneAI stores both user-provided context and AI-generated responses, facilitating complex interactions and state management.
 
-```typescript
-export type AIModel = (typeof MODELS)[keyof typeof MODELS];
-```
+### Chain of Thought (COT) and Tree of Thought (TOT)
 
-### DynamicTypeKind
+COT and TOT are techniques to manage and generate content in a sequential or branching manner.
 
-```typescript
-export type DynamicTypeKind = "chainOfThought" | "treeOfThought";
-```
+### Iteration
 
-### PromptType
+DuneAI supports iterating over prompts and dynamics, allowing for repeated interactions and complex content generation.
 
-```typescript
-export type PromptType = {
-  name: string;
-  content: string | PromptType;
-  model: AIModel;
-  run: (dynamic: DynamicType, context: any) => Promise<string>;
-};
-```
+### Spice (Runtime Prompt Pre-processing Snippets)
 
-### DynamicType
+Spice allows for pre-processing of prompts at runtime, enabling dynamic content generation.
 
-```typescript
-export type DynamicType = {
-  name: string;
-  kind: DynamicTypeKind;
-  context: Record<string, any>;
-  prompts: PromptType[];
-  run: (dynamic: DynamicType) => Promise<string>;
-};
-```
+## Utilities
+
+### Adapters
+
+Adapters facilitate communication with various AI services and platforms.
+
+- **GPT4ALL**: Local or custom text generation.
+- **Vercel AI**: Seamless integration with Vercel AI services.
+- **Standard Diffusion**: Image generation with Stable Diffusion.
+
+### Factories
+
+Factories allow for the composition and reuse of DuneAI instances.
+
+### Observability with WORM
+
+WORM (Workflow Orchestration and Regenerative Monitor) provides an observability dashboard for interstitial data processing within DuneAI instances.
+
+## Upcoming Features
+
+- Testing
+- Data Regression Testing
+- Fine Tuning
+- Embeddings and vector search
+- More entry points (REST API, Queue, etc.)
+- ThinkingMachine: Auto-generated dynamic factories
+- More Spice
+- Additional adapters (e.g., HuggingFace)
 
 ## Contribution Guidelines
 
@@ -229,7 +210,3 @@ Report bugs or feature requests in the [Issues](https://github.com/github_userna
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
-
----
-
-This Readme was written using DuneAI, and GPT4o. It was edited with ChatGPT by GPT4o and Kenan Stipek.
