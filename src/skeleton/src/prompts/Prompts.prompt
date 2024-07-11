@@ -1,0 +1,12 @@
+# Languages
+Write a ist of {{ context.Count }} languages, just the selected languages in a list.
+
+# HelloWorld
+Say "hello world" in language number: ${iteration}, only the translation, no introductions or delaminations:
+{{ Say.Languages }}
+
+# Respond
+Now say hello back to each in their own language:
+{{ Say.HelloWorld }}
+
+Don't include additional information.

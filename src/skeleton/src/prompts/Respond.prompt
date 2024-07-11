@@ -1,0 +1,4 @@
+Now say hello back to each in their own language:
+{{ Say.HelloWorld }}
+
+Don't include additional information.

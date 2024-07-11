@@ -1,0 +1,47 @@
+{
+  "name": "duneai",
+  "version": "0.9.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "run": "ts-node src/skeleton/src/index.ts",
+    "setup": "node duneai-setup.js"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^0.0.28",
+    "@ai-sdk/openai": "^0.0.35",
+    "@types/fs-extra": "^11.0.4",
+    "@types/mustache": "^4.2.5",
+    "@types/node": "^20.12.7",
+    "bottleneck": "^2.19.5",
+    "chalk": "^5.3.0",
+    "chalk-animation": "^2.0.3",
+    "commander": "^12.1.0",
+    "download-git-repo": "^3.0.2",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.4.1",
+    "gpt4all": "^4.0.0",
+    "inquirer": "^10.0.1",
+    "inquirer-search-checkbox": "^1.0.0",
+    "mustache": "^4.2.0",
+    "node-sd-webui": "^0.0.8",
+    "openai": "^4.38.5",
+    "ora": "^8.0.1",
+    "ts-node": "^10.9.2",
+    "ts-transformer-keys": "^0.4.4",
+    "typescript": "^5.4.5",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^14.0.0",
+    "ts-node": "^9.0.0"
+  },
+  "bin": {
+    "init": "./duneai-setup.js"
+  }
+}
