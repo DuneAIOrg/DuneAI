@@ -26,35 +26,46 @@ DuneAI is a highly opinionated AI framework designed for TypeScript, focusing on
 
 To get started with generating a story:
 
-1. **Configure Environment Variables**
+1. **Install GPT4ALL**
 
-   Ensure you have your OpenAI API Key set up as an environment variable.
-
-   ```sh
-   export OPENAI_API_KEY='YOUR_API_KEY'
-   ```
+   Ensure you have GPT4ALL installed. You can find the installation instructions [here](https://gpt4all.io/index.html).
 
 2. **Running the Script**
 
    ```sh
-   npm run dev
+   # Clone this repository and then...
+   npm run setup
+   cd projectDirectory
+   npm run start
    ```
 
-3. **Example: Customizing Your Story**
+3. **Example: Customizing Your Orchistration**
 
    Modify parameters in `runPrimeDynamic` in `.skeleton/src/index.ts` to customize the genre, character count, paragraph count, and author.
 
    ```typescript
-   import { runPrimeDynamic } from "./skeleton/src/dynamics";
+   // @ts-ignore
+   import DuneAI from "duneai";
+
+   const { Countries } = DuneAI.importPrompts("src/Countries.prompt");
+   const { Capitals, Info } = DuneAI.importPrompts("src/Prompts.prompt");
+
+   const COUNTRY_COUNT = 3;
+   const iterations = COUNTRY_COUNT;
+
+   const primeDynamic = DuneAI.createDynamic({
+     context: { Count: COUNTRY_COUNT },
+     name: "Geography",
+     prompts:
+     [{ Countries }
+       ...DuneAI.Iterator([{ Capitals }], { iterations }),
+       ...DuneAI.Iterator([{ Info }], { iterations }),
+     ],
+   });
 
    (async () => {
-     const result = await runPrimeDynamic({
-       genre: "science fiction",
-       characterCount: 4,
-       paragraphCount: 5,
-       author: "Isaac Asimov",
-     });
-     console.log("Generated Story:", result);
+     const result = await info.run();
+     console.log({ result });
    })();
    ```
 
@@ -64,16 +75,22 @@ Add your prompts as Mustache files in the `prompts` directory and use them in yo
 
 1. **Create Prompt Files**
 
-   Create a file named `Introduction.prompt` in the `prompts` directory with the following content:
+   Create a file named `Countries.prompt` in the `prompts` directory with the following content:
 
    ```mustache
-   Write an introduction for a story set in a {{ genre }} world with {{ characterCount }} characters.
+   Pick and list {{ context.Count }} random countries.
    ```
 
-   Create another file named `Paragraph.prompt` in the `prompts` directory with the following content:
+   Create another file named `Prompts.prompt` in the `prompts` directory with the following content:
 
    ```mustache
-   Continue the story with a paragraph that includes interactions between the characters.
+   # Capitals
+   Pick the listed number {{ iteration }} country in this list, return its capital city:
+   {{ Geography.Countries }}
+
+   # Info
+   Provide an interesting fact about this capital city:
+   {{ Geography.Capitals_iteration_${iteration} }}
    ```
 
 2. **Import and Use Prompts**
@@ -81,32 +98,28 @@ Add your prompts as Mustache files in the `prompts` directory and use them in yo
    Modify the dynamic structure to use these prompts:
 
    ```typescript
-   import { runPrimeDynamic } from "./skeleton/src/dynamics";
-   import { importPrompts } from "./skeleton/src/utils";
+   // @ts-ignore
+   import DuneAI from "duneai";
 
-   // Import prompts from files
-   const { Introduction, Paragraph } = importPrompts([
-     "prompts/Introduction.prompt",
-     "prompts/Paragraph.prompt",
-   ]);
+   const { Countries } = DuneAI.importPrompts("src/Countries.prompt");
+   const { Capitals, Info } = DuneAI.importPrompts("src/Prompts.prompt");
 
-   const storyDynamic = {
-     name: "SciFiStory",
-     kind: "chainOfThought",
+   const COUNTRY_COUNT = 3;
+   const iterations = COUNTRY_COUNT;
+
+   const primeDynamic = DuneAI.createDynamic({
+     context: { Count: COUNTRY_COUNT },
+     name: "Geography",
      prompts: [
-       { name: "Introduction", content: Introduction },
-       { name: "Paragraph", content: Paragraph },
+       { Countries }
+       ...DuneAI.Iterator([{ Capitals }], { iterations }),
+       ...DuneAI.Iterator([{ Info }], { iterations }),
      ],
-   };
+   });
 
    (async () => {
-     const result = await runPrimeDynamic({
-       genre: "science fiction",
-       characterCount: 4,
-       paragraphCount: 5,
-       author: "Isaac Asimov",
-     }, storyDynamic);
-     console.log("Generated Story:", result);
+     const result = await info.run();
+     console.log({ result });
    })();
    ```
 
@@ -127,15 +140,13 @@ These utilities are used to import prompts and create dynamic structures.
 ```typescript
 import { importPrompts, createDynamic } from 'duneai';
 
-const { Introduction, Paragraph } = importPrompts([
-  'prompts/Introduction.prompt',
-  'prompts/Paragraph.prompt'
-]);
+const { Countries } = importPrompts("src/Countries.prompt");
+const { Capitals, Info } = importPrompts("src/Prompts.prompt");
 
 const dynamic = createDynamic({
-  name: 'Story',
+  name: 'Geography',
   kind: 'chainOfThought',
-  prompts: [{ Introduction }, { Paragraph }]
+  prompts: [{ Countries }, { Capitals }, { Info }]
 });
 ```
 
