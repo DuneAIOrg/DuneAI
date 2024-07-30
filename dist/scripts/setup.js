@@ -40,7 +40,7 @@ const { execSync } = require("child_process");
 const installDependencies = (projectDir, adapters, providers, typescript) => __awaiter(void 0, void 0, void 0, function* () {
     const ora = (yield Promise.resolve().then(() => __importStar(require("ora")))).default;
     const dependencies = [];
-    // dependencies.push("duneai/duneai");
+    dependencies.push("DuneAIOrg/duneai");
     if (typescript) {
         dependencies.push("typescript");
         dependencies.push("ts-node");

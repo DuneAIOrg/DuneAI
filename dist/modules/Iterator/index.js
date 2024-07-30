@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Iterator;
-const Prompt_1 = __importDefault(require("../Prompt"));
+const Prompt_1 = require("../Prompt");
 function Iterator(items, options) {
     const { iterations, collectionKey, collection } = options;
     let iterableCollection = [];
@@ -33,17 +30,17 @@ function Iterator(items, options) {
         }
         else {
             const key = Object.keys(item)[0];
+            // @ts-ignore
             const value = item[key];
             // @ts-ignore
-            return (0, Prompt_1.default)().create({ name: key, content: value });
+            return (0, Prompt_1.createPrompt)({ name: key, content: value });
         }
     });
     const iteratedItems = [];
     iterableCollection.forEach((iterationValue, index) => {
         instantiatedItems.forEach((item) => {
-            const newItem = (0, Prompt_1.default)().create(Object.assign(Object.assign({}, item), { name: `${item.name}_iteration_${index + 1}`, iteratable: {
+            const newItem = (0, Prompt_1.createPrompt)(Object.assign(Object.assign({}, item), { name: `${item.name}_iteration_${index + 1}`, spice: {
                     iteration: index + 1,
-                    collectionKey: `${collectionKey}`,
                     iterationValue,
                 } }));
             iteratedItems.push(newItem);

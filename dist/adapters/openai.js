@@ -25,10 +25,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ask = exports.openai = void 0;
 const openai_1 = __importDefault(require("openai"));
-const __1 = require("../");
+// import { OPENAI_API_KEY } from "../";
 const throttling_1 = require("../utils/throttling");
 exports.openai = new openai_1.default({
-    apiKey: __1.OPENAI_API_KEY,
+// apiKey: OPENAI_API_KEY,
 });
 const getCompletion = (content_1, ...args_1) => __awaiter(void 0, [content_1, ...args_1], void 0, function* (content, _a = { model: "GPT_FOUR" }) {
     var _b;

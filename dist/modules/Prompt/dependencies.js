@@ -15,26 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultDependencies = void 0;
 const mustache_1 = __importDefault(require("mustache"));
 const adapters_1 = require("../../adapters");
-const store_1 = require("../../store");
 const utils_1 = require("../../utils");
 exports.defaultDependencies = {
-    run(prompt, dynamic) {
+    run(prompt, state) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            const data = store_1.useStore.getState();
-            // @ts-ignore
-            const iterationValue = ((_a = prompt.iteratable) === null || _a === void 0 ? void 0 : _a.iterationValue) || 0;
-            // @ts-ignore
-            const iteration = ((_b = prompt.iteratable) === null || _b === void 0 ? void 0 : _b.iteration) || -1;
+            const iterationValue = ((_a = prompt.spice) === null || _a === void 0 ? void 0 : _a.iterationValue) || "";
+            const iteration = ((_b = prompt.spice) === null || _b === void 0 ? void 0 : _b.iteration) || -1;
             const promptWithIteration = (iteration &&
                 (0, utils_1.interpolateIteration)(prompt.content, {
                     iteration,
                     iterationValue,
                 })) ||
                 prompt.content;
-            const interpolatedContent = mustache_1.default.render(promptWithIteration, Object.assign(Object.assign({}, Object.assign({ context: data.context }, data.generations)), { generationName: `${dynamic.name}.${prompt.name}`, iterationValue,
+            const interpolatedContent = mustache_1.default.render(promptWithIteration, Object.assign(Object.assign({}, state), { iterationValue,
                 iteration }));
-            // console.log(`Invoking Prompt: ${prompt.name}`);
+            console.log(`Invoking Prompt: ${prompt.name}`);
             const aiResponse = (yield (0, adapters_1.ask)(interpolatedContent, prompt.model));
             return aiResponse;
         });

@@ -22,24 +22,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SayHelloWorld = void 0;
 const path = __importStar(require("path"));
-const __1 = __importDefault(require("../../../"));
+const __1 = require("../../../");
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
-const { Languages, HelloWorld, Respond } = __1.default.importPrompts(fullPath);
-const COUNT = 5;
-exports.SayHelloWorld = __1.default.createDynamic({
-    name: "Say",
-    context: {
-        Count: COUNT,
-    },
-    prompts: [
-        { Languages },
-        ...__1.default.Iterator([{ HelloWorld }], { iterations: COUNT }),
-        { Respond },
-    ],
+const { Continent, Languages, HelloWorld, Respond } = (0, __1.importPrompts)(fullPath);
+const COUNT = 4;
+const PickLocale = (0, __1.createDynamic)("PickLocale", [{ Continent }, { Languages }]);
+const RespondToAll = (0, __1.createDynamic)("RespondToAll", [{ Respond }]);
+exports.SayHelloWorld = (0, __1.createDynamic)({
+    name: "SayHelloWorld",
+    kind: __1.TOT,
+    context: { Count: COUNT },
+    prompts: (0, __1.Iterator)([{ HelloWorld }], { iterations: COUNT }),
+    before: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield PickLocale.run(state); }),
+    after: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield RespondToAll.run(state); }),
 });

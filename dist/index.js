@@ -26,17 +26,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OPENAI_API_KEY = void 0;
+exports.CoT = exports.COT = exports.ToT = exports.TOT = exports.importPrompts = exports.createDynamic = exports.Iterator = exports.Dynamic = exports.Prompt = void 0;
 const Prompt_1 = __importStar(require("./modules/Prompt"));
+exports.Prompt = Prompt_1.default;
+Object.defineProperty(exports, "importPrompts", { enumerable: true, get: function () { return Prompt_1.importPrompts; } });
 const Dynamic_1 = __importStar(require("./modules/Dynamic"));
+exports.Dynamic = Dynamic_1.default;
+Object.defineProperty(exports, "createDynamic", { enumerable: true, get: function () { return Dynamic_1.createDynamic; } });
 const Iterator_1 = __importDefault(require("./modules/Iterator"));
-exports.OPENAI_API_KEY = "1";
+exports.Iterator = Iterator_1.default;
+const TOT = "treeOfThought";
+exports.TOT = TOT;
+const COT = "chainOfThought";
+exports.COT = COT;
+const CoT = COT;
+exports.CoT = CoT;
+const ToT = TOT;
+exports.ToT = ToT;
 exports.default = {
     Prompt: Prompt_1.default,
     Dynamic: Dynamic_1.default,
     Iterator: Iterator_1.default,
     createDynamic: Dynamic_1.createDynamic,
     importPrompts: Prompt_1.importPrompts,
-    COT: "chainOfThought",
-    TOT: "treeOfThought",
+    TOT,
+    ToT,
+    COT,
+    CoT,
 };

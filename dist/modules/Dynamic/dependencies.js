@@ -13,80 +13,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultDependencies = void 0;
-const Prompt_1 = __importDefault(require("../Prompt"));
 const store_1 = require("../../store");
+const logger_1 = __importDefault(require("../../middleware/logger"));
 exports.defaultDependencies = {
-    beforeLife: () => __awaiter(void 0, void 0, void 0, function* () {
-        // console.log(`beforeLife: ${JSON.stringify(context)}`);
+    before: () => __awaiter(void 0, void 0, void 0, function* () {
+        logger_1.default.info("Running before hook");
     }),
-    afterDeath: () => __awaiter(void 0, void 0, void 0, function* () {
-        // console.log(`afterDeath: ${JSON.stringify(context)}`);
+    after: () => __awaiter(void 0, void 0, void 0, function* () {
+        logger_1.default.info("Running after hook");
     }),
-    runChainOfThought(dynamic) {
+    runChainOfThought(dynamic, initialState) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Running ${dynamic.name} Dynamic`);
-            const { setGeneration } = store_1.useStore.getState();
-            for (const prompt of dynamic.prompts) {
-                const generation = yield prompt.run(dynamic);
-                setGeneration(dynamic.name, prompt.name, generation);
+            logger_1.default.info(`Running ${dynamic.name} Chain of Thought Dynamic`);
+            const { state: storeState, setState } = store_1.useStore.getState();
+            let state = Object.assign(Object.assign({}, initialState), storeState);
+            for (const prompt of dynamic.prompts || []) {
+                state = store_1.useStore.getState();
+                const generation = yield prompt.run(state.state);
+                setState(dynamic.name, prompt.name, generation);
             }
-            const result = store_1.useStore.getState().generations[dynamic.name];
-            return result;
+            return store_1.useStore.getState();
         });
     },
-    runTreeOfThought(dynamic) {
+    runTreeOfThought(dynamic, initialState) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Running ${dynamic.name} Tree of Thought Dynamic`);
-            const { getState } = store_1.useStore;
-            const { setGeneration } = getState();
-            let result = Object.assign(Object.assign({}, getState().generations[dynamic.name]), dynamic.context);
-            const promptResults = yield Promise.all(dynamic.prompts.map((prompt) => {
-                const newPrompt = (0, Prompt_1.default)().create(prompt);
-                return newPrompt.run(dynamic);
-            }));
-            promptResults.forEach((output) => {
-                if (typeof output === "object" && output !== null) {
-                    const name = Object.keys(output)[0];
-                    result = Object.assign({}, result);
-                    setGeneration(dynamic.name, name, output[name]);
-                }
-            });
-            return result;
+            logger_1.default.info(`Running ${dynamic.name} Tree of Thought Dynamic`);
+            const { state: storeState, setState } = store_1.useStore.getState();
+            let state = Object.assign(Object.assign({}, initialState), storeState);
+            yield Promise.all((dynamic.prompts || []).map((prompt) => __awaiter(this, void 0, void 0, function* () {
+                const generation = yield prompt.run(state.state);
+                setState(dynamic.name, prompt.name, generation);
+            })));
+            return store_1.useStore.getState();
         });
     },
-    run(dynamic) {
+    run(initialState, dynamic) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { getState } = store_1.useStore;
-            const { setGeneration } = getState();
-            if (dynamic.beforeLife) {
-                const beforeLifeResult = yield dynamic.beforeLife(getState().generations[dynamic.name]);
-                // @ts-ignore
-                if (beforeLifeResult) {
-                    setGeneration(dynamic.name, "beforeLife", beforeLifeResult);
-                }
+            let state = {};
+            const { state: storeState } = store_1.useStore.getState();
+            state = Object.assign(Object.assign({}, storeState), initialState);
+            if (dynamic.before) {
+                logger_1.default.info("Running before hook");
+                const beforeResult = (yield dynamic.before(state));
+                state = Object.assign(Object.assign({}, state), beforeResult);
             }
-            console.log(`Starting Dynamic: ${dynamic.kind}`);
-            let result;
-            switch (dynamic.kind) {
-                case "chainOfThought":
-                    result = yield this.runChainOfThought(dynamic);
-                    break;
-                case "treeOfThought":
-                    result = yield this.runTreeOfThought(dynamic);
-                    break;
-                default:
-                    console.error("Unknown dynamic type");
-                    return {};
+            const strategy = dynamic.kind === "chainOfThought"
+                ? this.runChainOfThought
+                : this.runTreeOfThought;
+            if (strategy) {
+                state = Object.assign(Object.assign({}, state), (yield strategy(dynamic, state)));
             }
-            if (dynamic.afterDeath) {
-                const afterDeathResult = yield dynamic.afterDeath(result);
-                // @ts-ignore
-                if (afterDeathResult) {
-                    setGeneration(dynamic.name, "afterDeath", afterDeathResult);
-                }
+            else {
+                logger_1.default.error("Unknown dynamic type");
+                return {};
             }
-            setGeneration(dynamic.name, "context", dynamic.context);
-            return result;
+            if (dynamic.after) {
+                logger_1.default.info("Running after hook");
+                const afterResult = (yield dynamic.after(state));
+                state = Object.assign(Object.assign({}, state), afterResult);
+            }
+            return state;
         });
     },
 };

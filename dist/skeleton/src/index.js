@@ -12,6 +12,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dynamics_1 = require("./dynamics");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield dynamics_1.SayHelloWorld.run();
-    const values = Object.values(result);
-    values.forEach((v) => console.log(v, "\n"));
+    console.log(JSON.stringify(result, null, 2), "\n");
 }))();
