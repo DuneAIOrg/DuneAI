@@ -7,17 +7,8 @@ const { Continent, Languages, HelloWorld, Respond } = importPrompts(fullPath);
 
 const COUNT = 4;
 
-// const PickLocale = createDynamic("PickLocale", [{ Continent }, { Languages }]);
-
-const PickLocale: DynamicType = createDynamic({
-  name: "PickLocale",
-  prompts: [{ Continent }, { Languages }],
-});
-
-const RespondToAll: DynamicType = createDynamic({
-  name: "RespondToAll",
-  prompts: [{ Respond }],
-});
+const PickLocale = createDynamic("PickLocale", [{ Continent }, { Languages }]);
+const RespondToAll = createDynamic("RespondToAll", [{ Respond }]);
 
 export const SayHelloWorld: DynamicType = createDynamic({
   name: "SayHelloWorld",

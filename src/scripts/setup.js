@@ -15,7 +15,7 @@ const installDependencies = async (
   const ora = (await import("ora")).default;
   const dependencies = [];
 
-  // dependencies.push("duneai/duneai");
+  dependencies.push("DuneAIOrg/duneai");
 
   if (typescript) {
     dependencies.push("typescript");
