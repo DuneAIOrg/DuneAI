@@ -34,7 +34,8 @@
     "ts-node": "^10.9.2",
     "ts-transformer-keys": "^0.4.4",
     "typescript": "^5.4.5",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "duneai": "github:DuneAIOrg/duneai"
   },
   "devDependencies": {
     "typescript": "^5.4.5",
