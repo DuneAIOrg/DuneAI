@@ -2,31 +2,31 @@ export type AIModel = (typeof MODELS)[keyof typeof MODELS];
 
 export type DynamicTypeKind = "chainOfThought" | "treeOfThought";
 
-export type Hook = (state: State) => void | Promise<void>;
+export type Hook = (state: Record<string, any>) => void | Promise<void> | any;
 
 export type PromptType = {
   name: string;
-  content: string;
   model: AIModel;
-  run: (dynamic: DynamicType, input?: any) => Promise<string>;
-  context?: Record<string, any>;
-  iteratable?:
-    | false
-    | {
-        iteration?: number;
-        iterationValue?: string;
-        collectionKey?: string;
-      };
+  run: (state: Record<string, any>) => Promise<string>;
+  content?: string;
+  options?: object;
+  spice?: {
+    iteration?: number;
+    iterationValue?: string;
+  };
 };
 
 export type DynamicType = {
   name: string;
-  kind?: DynamicTypeKind;
-  prompts: (PromptType | Record<string, string>)[];
+  kind: DynamicTypeKind;
+  run: (
+    initialState?: Record<string, any>,
+    dynamic?: DynamicType,
+  ) => Promise<Record<string, any>>;
+  prompts?: (PromptType | Record<string, string>)[];
   context?: any;
-  run: (dynamic?: DynamicType, input?: any) => Promise<void | any>;
-  beforeLife?: Hook;
-  afterDeath?: Hook;
+  before?: Hook;
+  after?: Hook;
 };
 
 export type IterationOptions = {

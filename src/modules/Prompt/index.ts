@@ -1,17 +1,42 @@
 import path from "path";
 import fs from "fs";
-import Mustache from "mustache";
-import { PromptType, DynamicType } from "../../types";
-import { ask } from "../../adapters";
-import { useStore } from "../../store";
-import { interpolateIteration } from "../../utils";
+import { PromptType } from "../../types";
+import { Dependencies, defaultDependencies } from "./dependencies";
 
-const importPrompt = (filePath: string): string => {
+export const createPrompt = (
+  params: Partial<PromptType>,
+  overrides: Partial<Dependencies> = {},
+): PromptType => {
+  const promptDependencies: Dependencies = {
+    ...defaultDependencies,
+    ...overrides,
+  };
+
+  return Object.freeze({
+    name: params.name ?? "defaultPrompt",
+    model: params.model ?? "LLAMA3",
+    ...params,
+    run: function (state: Record<string, any>) {
+      return promptDependencies.run(this as unknown as PromptType, state);
+    },
+  });
+};
+
+const Prompt = (
+  params: Partial<PromptType>,
+  overrides: Partial<Dependencies> = {},
+) => createPrompt(params, overrides);
+
+export default Prompt;
+
+export const importPrompt = (filePath: string): string => {
   const absolutePath = path.resolve(process.cwd(), filePath);
   return fs.readFileSync(absolutePath, "utf8");
 };
 
-const parsePromptsFromFile = (content: string): Record<string, string> => {
+export const parsePromptsFromFile = (
+  content: string,
+): Record<string, string> => {
   const prompts: Record<string, string> = {};
   const sections = content.split(/^#\s*(\w+)/gm);
 
@@ -46,62 +71,3 @@ export const importPrompts = (
     return parsePromptsFromFile(content);
   }
 };
-
-const run = async (prompt: PromptType, dynamic: DynamicType) => {
-  const data = useStore.getState();
-
-  // @ts-ignore
-  const iterationValue = prompt.iteratable?.iterationValue || "";
-  // @ts-ignore
-  const iteration = prompt.iteratable?.iteration || -1;
-
-  const promptWithIteration =
-    (iteration &&
-      interpolateIteration(prompt.content, {
-        iteration,
-        iterationValue,
-      })) ||
-    prompt.content;
-
-  const interpolatedContent = Mustache.render(promptWithIteration as string, {
-    ...{
-      context: data.context,
-      ...data.generations,
-    },
-    generationName: `${dynamic.name}.${prompt.name}`,
-    iterationValue,
-    iteration,
-  });
-
-  // console.log(`++++\n${interpolatedContent}++++`);
-
-  console.log(`Invoking Prompt: ${prompt.name}`);
-  const aiResponse = (await ask(interpolatedContent, prompt.model)) as string;
-  return aiResponse;
-};
-
-export default function Prompt() {
-  return {
-    create: function (content: string | Partial<PromptType>) {
-      if (typeof content === "string") {
-        return {
-          ...this.prompt,
-          content,
-        };
-      } else {
-        return {
-          ...this.prompt,
-          ...content,
-        };
-      }
-    },
-    prompt: {
-      name: "Prompt",
-      content: "Default prompt content",
-      model: "LLAMA3",
-      run: function (dynamic: DynamicType) {
-        return run(this as unknown as PromptType, dynamic);
-      },
-    },
-  };
-}

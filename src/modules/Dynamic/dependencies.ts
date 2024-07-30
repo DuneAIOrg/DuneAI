@@ -1,107 +1,95 @@
-// dependencies.ts
-import { PromptType, DynamicType, Hook, DynamicTypeKind } from "../../types";
-import Prompt from "../Prompt";
+import { PromptType, DynamicType, Hook } from "../../types";
 import { useStore } from "../../store";
+import Logger from "../../middleware/logger";
 
 export interface FunctionTypes {
-  runChainOfThought: (dynamic: DynamicType) => Promise<Record<string, any>>;
-  runTreeOfThought: (dynamic: DynamicType) => Promise<Record<string, any>>;
-  run: (dynamic: DynamicType) => Promise<Record<string, any>>;
+  runTreeOfThought: (
+    dynamic: DynamicType,
+    initialState: Record<string, any>,
+  ) => Promise<Record<string, any>>;
+  runChainOfThought: (
+    dynamic: DynamicType,
+    initialState: Record<string, any>,
+  ) => Promise<Record<string, any>>;
+  run: (
+    initialState: Record<string, any>,
+    dynamic: DynamicType,
+  ) => Promise<Record<string, any>>;
 }
 
 export interface Constants {
-  beforeLife: Hook;
-  afterDeath: Hook;
+  before: Hook;
+  after: Hook;
 }
 
 export interface Dependencies extends FunctionTypes, Constants {}
 
 export const defaultDependencies: Dependencies = {
-  beforeLife: async () => {
-    // console.log(`beforeLife: ${JSON.stringify(context)}`);
+  before: async () => {
+    Logger.info("Running before hook");
   },
-  afterDeath: async () => {
-    // console.log(`afterDeath: ${JSON.stringify(context)}`);
+  after: async () => {
+    Logger.info("Running after hook");
   },
 
-  async runChainOfThought(dynamic) {
-    console.log(`Running ${dynamic.name} Dynamic`);
-    const { setGeneration } = useStore.getState();
+  async runChainOfThought(dynamic, initialState) {
+    Logger.info(`Running ${dynamic.name} Chain of Thought Dynamic`);
+    const { state: storeState, setState } = useStore.getState();
+    let state = { ...initialState, ...storeState };
 
-    for (const prompt of dynamic.prompts) {
-      const generation = await (prompt as PromptType).run(dynamic);
-      setGeneration(dynamic.name, prompt.name, generation);
+    for (const prompt of dynamic.prompts || []) {
+      state = useStore.getState();
+      const generation = await (prompt as PromptType).run(state.state);
+      setState(dynamic.name, prompt.name, generation);
     }
 
-    const result = useStore.getState().generations[dynamic.name];
-    return result;
+    return useStore.getState();
   },
 
-  async runTreeOfThought(dynamic) {
-    console.log(`Running ${dynamic.name} Tree of Thought Dynamic`);
-    const { getState } = useStore;
-    const { setGeneration } = getState();
-    let result = {
-      ...getState().generations[dynamic.name],
-      ...dynamic.context,
-    };
+  async runTreeOfThought(dynamic, initialState) {
+    Logger.info(`Running ${dynamic.name} Tree of Thought Dynamic`);
+    const { state: storeState, setState } = useStore.getState();
+    let state = { ...initialState, ...storeState };
 
-    const promptResults = await Promise.all(
-      dynamic.prompts.map((prompt) => {
-        const newPrompt = Prompt().create(prompt);
-        return newPrompt.run(dynamic);
+    await Promise.all(
+      (dynamic.prompts || []).map(async (prompt) => {
+        const generation = await (prompt as PromptType).run(state.state);
+        setState(dynamic.name, prompt.name, generation);
       }),
     );
 
-    promptResults.forEach((output) => {
-      if (typeof output === "object" && output !== null) {
-        const name = Object.keys(output)[0];
-        result = { ...result };
-        setGeneration(dynamic.name, name, output[name]);
-      }
-    });
-
-    return result;
+    return useStore.getState();
   },
 
-  async run(dynamic) {
-    const { getState } = useStore;
-    const { setGeneration } = getState();
+  async run(initialState, dynamic) {
+    let state: Record<string, any> = {};
+    const { state: storeState } = useStore.getState();
+    state = { ...storeState, ...initialState };
 
-    if (dynamic.beforeLife) {
-      const beforeLifeResult = await dynamic.beforeLife(
-        getState().generations[dynamic.name],
-      );
-      // @ts-ignore
-      if (beforeLifeResult) {
-        setGeneration(dynamic.name, "beforeLife", beforeLifeResult);
-      }
+    if (dynamic.before) {
+      Logger.info("Running before hook");
+      const beforeResult = (await dynamic.before(state)) as unknown as object;
+      state = { ...state, ...beforeResult };
     }
 
-    console.log(`Starting Dynamic: ${dynamic.kind}`);
+    const strategy =
+      dynamic.kind === "chainOfThought"
+        ? this.runChainOfThought
+        : this.runTreeOfThought;
 
-    let result: any;
-    switch (dynamic.kind) {
-      case "chainOfThought":
-        result = await this.runChainOfThought(dynamic);
-        break;
-      case "treeOfThought":
-        result = await this.runTreeOfThought(dynamic);
-        break;
-      default:
-        console.error("Unknown dynamic type");
-        return {};
+    if (strategy) {
+      state = { ...state, ...(await strategy(dynamic, state)) };
+    } else {
+      Logger.error("Unknown dynamic type");
+      return {};
     }
 
-    if (dynamic.afterDeath) {
-      const afterDeathResult = await dynamic.afterDeath(result);
-      // @ts-ignore
-      if (afterDeathResult) {
-        setGeneration(dynamic.name, "afterDeath", afterDeathResult);
-      }
+    if (dynamic.after) {
+      Logger.info("Running after hook");
+      const afterResult = (await dynamic.after(state)) as unknown as object;
+      state = { ...state, ...afterResult };
     }
 
-    setGeneration(dynamic.name, "context", dynamic.context);
-    return result;
+    return state;
   },
 };

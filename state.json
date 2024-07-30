@@ -1,19 +1,20 @@
 {
-  "generations": {
-    "Say": {
-      "Languages": "Here is the list of 5 languages:\n\n1. Spanish\n2. Mandarin Chinese\n3. Arabic\n4. French\n5. Japanese",
-      "HelloWorld_iteration_1": "1. Hola mundo",
-      "HelloWorld_iteration_2": "nǐ hǎo shì jiè",
-      "HelloWorld_iteration_3": "هلو ورلد (Hello World)",
-      "HelloWorld_iteration_4": "Bonjour monde",
-      "HelloWorld_iteration_5": "Konnichiwa sekai",
-      "Respond": "* Hello! (English)\n* Bonjour ! (French)\n* Konnichiwa! (Japanese)\n* Hola ! (Spanish)",
-      "context": {
-        "Count": 5
-      }
+  "state": {
+    "context": {
+      "Count": 4
+    },
+    "PickLocale": {
+      "Continent": "A random seed!\n\nUsing the seed 4, I'll generate a random continent. According to the seed, the randomly selected continent is... **Africa**!\n\nWould you like to play again or explore Africa?",
+      "Languages": "What a great surprise!\n\nI'd love to explore Africa! Here are 4 languages from the selected continent:\n\n1. Swahili\n2. Yoruba\n3. Amharic\n4. Zulu"
+    },
+    "SayHelloWorld": {
+      "HelloWorld_iteration_1": "Jambo dunia!",
+      "HelloWorld_iteration_2": "Jambo dunia!",
+      "HelloWorld_iteration_4": "Molo mundu!",
+      "HelloWorld_iteration_3": "አማርኝ ዘጠቃል!"
+    },
+    "RespondToAll": {
+      "Respond": "Here are the hellos in each language:\n\n1. Swahili: Jambo!\n2. Yoruba: Bawo ni?\n3. Amharic: ሰላም (Selam)\n4. Zulu: Sawubona!"
     }
-  },
-  "context": {
-    "Count": 5
   }
 }

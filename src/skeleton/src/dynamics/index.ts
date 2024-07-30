@@ -1,20 +1,29 @@
 import * as path from "path";
-import DuneAI from "../../../";
+import { createDynamic, importPrompts, Iterator, TOT } from "../../../";
 import { DynamicType } from "../../../types";
 
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
-const { Languages, HelloWorld, Respond } = DuneAI.importPrompts(fullPath);
+const { Continent, Languages, HelloWorld, Respond } = importPrompts(fullPath);
 
-const COUNT = 5;
+const COUNT = 4;
 
-export const SayHelloWorld: DynamicType = DuneAI.createDynamic({
-  name: "Say",
-  context: {
-    Count: COUNT,
-  },
-  prompts: [
-    { Languages },
-    ...DuneAI.Iterator([{ HelloWorld }], { iterations: COUNT }),
-    { Respond },
-  ],
+// const PickLocale = createDynamic("PickLocale", [{ Continent }, { Languages }]);
+
+const PickLocale: DynamicType = createDynamic({
+  name: "PickLocale",
+  prompts: [{ Continent }, { Languages }],
+});
+
+const RespondToAll: DynamicType = createDynamic({
+  name: "RespondToAll",
+  prompts: [{ Respond }],
+});
+
+export const SayHelloWorld: DynamicType = createDynamic({
+  name: "SayHelloWorld",
+  kind: TOT,
+  context: { Count: COUNT },
+  prompts: Iterator([{ HelloWorld }], { iterations: COUNT }),
+  before: async ({ state }) => await PickLocale.run(state),
+  after: async ({ state }) => await RespondToAll.run(state),
 });

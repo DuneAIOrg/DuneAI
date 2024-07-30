@@ -1,9 +1,9 @@
 import OpenAI from "openai";
-import { OPENAI_API_KEY } from "../";
+// import { OPENAI_API_KEY } from "../";
 import { throttledOperation } from "../utils/throttling";
 
 export const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
+  // apiKey: OPENAI_API_KEY,
 });
 
 const getCompletion = async (

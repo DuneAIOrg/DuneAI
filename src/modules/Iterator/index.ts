@@ -1,5 +1,5 @@
 import { PromptType } from "../../types";
-import Prompt from "../Prompt";
+import { createPrompt } from "../Prompt";
 
 type IterationOptions = {
   iterations?: number;
@@ -38,9 +38,10 @@ export default function Iterator(
       return item as PromptType;
     } else {
       const key = Object.keys(item)[0];
+      // @ts-ignore
       const value = item[key];
       // @ts-ignore
-      return Prompt().create({ name: key, content: value });
+      return createPrompt({ name: key, content: value });
     }
   });
 
@@ -48,12 +49,11 @@ export default function Iterator(
 
   iterableCollection.forEach((iterationValue, index) => {
     instantiatedItems.forEach((item) => {
-      const newItem = Prompt().create({
+      const newItem = createPrompt({
         ...item,
         name: `${item.name}_iteration_${index + 1}`,
-        iteratable: {
+        spice: {
           iteration: index + 1,
-          collectionKey: `${collectionKey}`,
           iterationValue,
         },
       });
