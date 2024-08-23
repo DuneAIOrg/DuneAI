@@ -21,7 +21,6 @@ async function getModel(
   let model: ModelType | null = null;
   try {
     model = await gpt.loadModel(modelPath, { device });
-    console.log("Model loaded successfully:", modelPath);
   } catch (error) {
     console.error("Failed to load model:", error);
     throw error;
@@ -60,6 +59,5 @@ export const ask = async (
 export const disposeModel = (model: ModelType, name: string): void => {
   if (model) {
     model.dispose();
-    console.log(`Model instance for ${name} disposed`);
   }
 };

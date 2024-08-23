@@ -3,14 +3,8 @@ import { useStore } from "../../store";
 import Logger from "../../middleware/logger";
 
 export interface FunctionTypes {
-  runTreeOfThought: (
-    dynamic: DynamicType,
-    initialState: Record<string, any>,
-  ) => Promise<Record<string, any>>;
-  runChainOfThought: (
-    dynamic: DynamicType,
-    initialState: Record<string, any>,
-  ) => Promise<Record<string, any>>;
+  runTreeOfThought: (dynamic: DynamicType) => Promise<void>;
+  runChainOfThought: (dynamic: DynamicType) => Promise<void>;
   run: (
     initialState: Record<string, any>,
     dynamic: DynamicType,
@@ -25,51 +19,48 @@ export interface Constants {
 export interface Dependencies extends FunctionTypes, Constants {}
 
 export const defaultDependencies: Dependencies = {
-  before: async () => {
-    Logger.info("Running before hook");
-  },
-  after: async () => {
-    Logger.info("Running after hook");
-  },
-
-  async runChainOfThought(dynamic, initialState) {
+  before: async () => {},
+  after: async () => {},
+  runChainOfThought: async (dynamic) => {
     Logger.info(`Running ${dynamic.name} Chain of Thought Dynamic`);
-    const { state: storeState, setState } = useStore.getState();
-    let state = { ...initialState, ...storeState };
 
     for (const prompt of dynamic.prompts || []) {
-      state = useStore.getState();
-      const generation = await (prompt as PromptType).run(state.state);
-      setState(dynamic.name, prompt.name, generation);
+      const { state, context } = useStore.getState();
+      const generation = await (prompt as PromptType).run({
+        ...state,
+        context,
+      });
+
+      useStore.getState().setState(dynamic.name, prompt.name, generation);
     }
-
-    return useStore.getState();
   },
-
-  async runTreeOfThought(dynamic, initialState) {
+  runTreeOfThought: async (dynamic) => {
     Logger.info(`Running ${dynamic.name} Tree of Thought Dynamic`);
-    const { state: storeState, setState } = useStore.getState();
-    let state = { ...initialState, ...storeState };
 
     await Promise.all(
       (dynamic.prompts || []).map(async (prompt) => {
-        const generation = await (prompt as PromptType).run(state.state);
-        setState(dynamic.name, prompt.name, generation);
+        const { state, context } = useStore.getState();
+        const generation = await (prompt as PromptType).run({
+          ...state,
+          context,
+        });
+        useStore.getState().setState(dynamic.name, prompt.name, generation);
       }),
     );
-
-    return useStore.getState();
   },
 
   async run(initialState, dynamic) {
-    let state: Record<string, any> = {};
-    const { state: storeState } = useStore.getState();
-    state = { ...storeState, ...initialState };
+    const { initializeState, setContext } = useStore.getState();
+
+    // Initialize state and context
+    initializeState(initialState);
+    setContext(dynamic?.context);
 
     if (dynamic.before) {
-      Logger.info("Running before hook");
-      const beforeResult = (await dynamic.before(state)) as unknown as object;
-      state = { ...state, ...beforeResult };
+      const beforeResult = (await dynamic.before({
+        ...useStore.getState(),
+      })) as object;
+      initializeState(beforeResult);
     }
 
     const strategy =
@@ -78,18 +69,19 @@ export const defaultDependencies: Dependencies = {
         : this.runTreeOfThought;
 
     if (strategy) {
-      state = { ...state, ...(await strategy(dynamic, state)) };
+      await strategy(dynamic);
     } else {
       Logger.error("Unknown dynamic type");
       return {};
     }
 
     if (dynamic.after) {
-      Logger.info("Running after hook");
-      const afterResult = (await dynamic.after(state)) as unknown as object;
-      state = { ...state, ...afterResult };
+      const afterResult = (await dynamic.after({
+        ...useStore.getState(),
+      })) as object;
+      initializeState(afterResult);
     }
 
-    return state;
+    return useStore.getState().state;
   },
 };

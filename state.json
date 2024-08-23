@@ -1,20 +1,21 @@
 {
   "state": {
-    "context": {
-      "Count": 4
-    },
+    "seed": 523452345235,
     "PickLocale": {
-      "Continent": "A random seed!\n\nUsing the seed 4, I'll generate a random continent. And the result is... **Africa**!\n\nWould you like to play again?",
-      "Languages": "What a great choice!\n\nHere are 4 languages from Africa:\n\n1. Swahili\n2. Yoruba\n3. Amharic\n4. Zulu"
+      "Continent": "What a unique seed value!\n\nUsing the provided seed value, I generated a random number using the modulo operator. The result is:\n\n52345 (mod 7) = 2\n\nThis corresponds to the continent of... **North America**!\n\nSo, the random continent I picked is North America.",
+      "Languages": "Exciting! Since the random continent is North America, here are 4 languages spoken in that region:\n\n1. English\n2. Spanish\n3. French\n4. Inuktitut"
     },
     "SayHelloWorld": {
-      "HelloWorld_iteration_1": "Jambo dunia!",
-      "HelloWorld_iteration_2": "Jambo dunia!",
-      "HelloWorld_iteration_4": "Sawubona umuntu!",
-      "HelloWorld_iteration_3": "አማርኛ የግርኛ ዘጠቃ!"
+      "HelloWorld_iteration_1": "Hello world: Hello World",
+      "HelloWorld_iteration_2": "Hola mundo",
+      "HelloWorld_iteration_3": "Bonjour monde!",
+      "HelloWorld_iteration_4": "ᐃᓱᒪᕋᐅᖃ!"
     },
     "RespondToAll": {
-      "Respond": "Here are the hellos in each language:\n\n1. Swahili: Jambo!\n2. Yoruba: Bawo ni?\n3. Amharic: ሰላም (Selam)\n4. Zulu: Sawubona!"
+      "Respond": "Here are the hellos:\n\n1. English: Hello!\n2. Spanish: Hola!\n3. French: Bonjour!\n4. Inuktitut: ᐃᓱ! (Isuma!)"
     }
+  },
+  "context": {
+    "count": 4
   }
 }

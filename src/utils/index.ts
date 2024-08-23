@@ -1,3 +1,5 @@
+import tiktoken, { type TiktokenModel } from "tiktoken";
+
 export const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const retryOperation = (
@@ -40,4 +42,27 @@ export const attemptObjectification = (content: string) => {
 export const objectify = (content: string) => {
   // check if the content string is a valid json object,
   // if so, return it as a js object
+};
+
+export const countTokens = (
+  content: string,
+  model: string,
+): { modelUsed: string; tokenCount: number } => {
+  let enc;
+  let tokenCount;
+  let modelUsed = model;
+  try {
+    enc = tiktoken.encoding_for_model(model as TiktokenModel);
+    tokenCount = enc.encode(content).length;
+  } catch {
+    modelUsed = "gpt-4o";
+    enc = tiktoken.encoding_for_model(modelUsed as TiktokenModel);
+    tokenCount = enc.encode(content).length;
+  } finally {
+    enc?.free();
+  }
+  return {
+    modelUsed,
+    tokenCount,
+  };
 };

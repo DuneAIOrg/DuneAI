@@ -1,7 +1,8 @@
 import Mustache from "mustache";
 import { PromptType } from "../../types";
 import { ask } from "../../adapters";
-import { interpolateIteration } from "../../utils";
+import { interpolateIteration, countTokens } from "../../utils";
+import Logger from "../../middleware/logger";
 
 export interface FunctionTypes {
   run: (prompt: PromptType, state: Record<string, any>) => Promise<string>;
@@ -26,12 +27,28 @@ export const defaultDependencies: Dependencies = {
 
     const interpolatedContent = Mustache.render(promptWithIteration as string, {
       ...state,
+      ...{
+        C: state.context,
+        Context: state.context,
+      },
       iterationValue,
       iteration,
     });
 
-    console.log(`Invoking Prompt: ${prompt.name}`);
+    const { tokenCount: sentTokenCount, modelUsed: sentModelUsed } =
+      countTokens(interpolatedContent, prompt.model);
+    Logger.info(
+      `Invoking Prompt ${prompt.name}, ${sentTokenCount} tokens sent (${sentModelUsed})`,
+    );
+    const startTime = Date.now();
     const aiResponse = (await ask(interpolatedContent, prompt.model)) as string;
+    const endTime = Date.now();
+    const elapsedTime = endTime - startTime;
+    const { tokenCount: responseTokenCount, modelUsed: responseModelUsed } =
+      countTokens(aiResponse, prompt.model);
+    Logger.info(
+      `Completed Prompt ${prompt.name}, ${responseTokenCount} tokens received (${responseModelUsed}) in ${elapsedTime}ms`,
+    );
 
     return aiResponse;
   },

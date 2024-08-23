@@ -1,8 +1,8 @@
 # Continent
-Pick a random continent. Use this as a seed: {{ context.Count }}
+Pick a random continent. Use this as a seed: {{ seed }}, tell me the seed value you used.
 
 # Languages
-Write a list of {{ context.Count }} languages from the selected continent: {{ PickLocale.Continent }}. Only list the selected languages.
+Write a list of {{ C.count }} languages from the selected continent: {{ PickLocale.Continent }}. Only list the selected languages.
 
 # HelloWorld
 Say "hello world" in language number ${iteration}. Only provide the translation, no introductions or delimitations:

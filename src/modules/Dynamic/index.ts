@@ -1,13 +1,12 @@
 import { Dependencies, defaultDependencies } from "./dependencies";
-import { DynamicType, PromptType } from "../../types";
+import { DynamicType, PromptType, NestedObject } from "../../types";
 import { createPrompt } from "../Prompt";
 import { useStore } from "../../store";
 
 export const createDynamic = (
   params: Partial<DynamicType> | string,
-  promptsOrOverrides:
-    | Partial<Dependencies>
-    | Array<Record<string, string>> = {},
+  context?: NestedObject,
+  prompts: Partial<Dependencies> | Array<Record<string, string>> = {},
   overrides: Partial<Dependencies> = {},
 ): DynamicType => {
   let dynamicParams: Partial<DynamicType>;
@@ -16,12 +15,13 @@ export const createDynamic = (
   if (typeof params === "string") {
     dynamicParams = {
       name: params,
-      prompts: promptsOrOverrides as Array<Record<string, string>>,
+      context: context as NestedObject,
+      prompts: prompts as Array<Record<string, string>>,
     };
     dynamicOverrides = overrides;
   } else {
     dynamicParams = params;
-    dynamicOverrides = promptsOrOverrides as Partial<Dependencies>;
+    dynamicOverrides = prompts as Partial<Dependencies>;
   }
 
   const dynamicDependencies: Dependencies = {
@@ -29,9 +29,8 @@ export const createDynamic = (
     ...dynamicOverrides,
   };
 
-  const { getState } = useStore;
-  const { setContext } = getState();
-  setContext(dynamicParams.context);
+  const { setContext } = useStore.getState();
+  setContext(context ?? dynamicParams.context);
 
   const instantiatedPrompts: PromptType[] =
     dynamicParams?.prompts?.map((prompt) => {
@@ -62,10 +61,9 @@ export const createDynamic = (
 
 const Dynamic = (
   params: DynamicType | string,
-  promptsOrOverrides:
-    | Partial<Dependencies>
-    | Array<Record<string, string>> = {},
+  context: NestedObject = {},
+  prompts: Array<Record<string, string>> | Partial<Dependencies> = {},
   overrides: Partial<Dependencies> = {},
-) => createDynamic(params, promptsOrOverrides, overrides);
+) => createDynamic(params, context, prompts, overrides);
 
 export default Dynamic;

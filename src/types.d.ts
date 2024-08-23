@@ -34,3 +34,15 @@ export type IterationOptions = {
   collectionKey?: () => string;
   collection?: any[];
 };
+
+export interface NestedObject {
+  [key: string]: unknown | NestedObject;
+}
+
+export interface AppState {
+  state: Record<string, any>;
+  context: NestedObject;
+  setState: (dynamicName: string, key: string, value: any) => void;
+  setContext: (context: NestedObject) => void;
+  initializeState: (initialState: Record<string, any>) => void;
+}

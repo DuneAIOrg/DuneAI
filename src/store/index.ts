@@ -1,33 +1,38 @@
 import { createStore } from "zustand/vanilla";
 import { createPersistMiddleware } from "../middleware";
-
-interface AppState {
-  state: Record<string, any>;
-  setState: (dynamicName: string, key: string, value: any) => void;
-  setContext: (context: any) => void;
-}
+import type { AppState, NestedObject } from "../types";
 
 export const useStore = createStore<AppState>(
   createPersistMiddleware("state.json")((set: Function) => ({
     state: {},
+    context: {},
     setState: (dynamicName: string, key: string, value: any) =>
-      set((state: { state: Record<string, any> }) => ({
+      set((store: { state: Record<string, any> }) => ({
         state: {
-          ...state.state,
+          ...store.state,
           [dynamicName]: {
-            ...state.state[dynamicName],
+            ...(store.state[dynamicName] || {}),
             [key]: value,
           },
         },
       })),
-    setContext: (context: object) =>
-      set((state: { state: Record<string, any> }) => ({
-        state: {
-          ...state.state,
+    setContext: (context: NestedObject) =>
+      set(
+        (store: {
+          state: AppState["state"];
+          context: AppState["context"];
+        }) => ({
           context: {
-            ...state.state.context,
+            ...store.context,
             ...context,
           },
+        }),
+      ),
+    initializeState: (initialState: Record<string, any>) =>
+      set((store: AppState) => ({
+        state: {
+          ...store.state,
+          ...initialState,
         },
       })),
   })),

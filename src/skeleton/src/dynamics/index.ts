@@ -7,13 +7,18 @@ const { Continent, Languages, HelloWorld, Respond } = importPrompts(fullPath);
 
 const COUNT = 4;
 
-const PickLocale = createDynamic("PickLocale", [{ Continent }, { Languages }]);
-const RespondToAll = createDynamic("RespondToAll", [{ Respond }]);
+const context = { count: COUNT };
+
+const PickLocale = createDynamic("PickLocale", context, [
+  { Continent },
+  { Languages },
+]);
+const RespondToAll = createDynamic("RespondToAll", context, [{ Respond }]);
 
 export const SayHelloWorld: DynamicType = createDynamic({
   name: "SayHelloWorld",
   kind: TOT,
-  context: { Count: COUNT },
+  context,
   prompts: Iterator([{ HelloWorld }], { iterations: COUNT }),
   before: async ({ state }) => await PickLocale.run(state),
   after: async ({ state }) => await RespondToAll.run(state),
