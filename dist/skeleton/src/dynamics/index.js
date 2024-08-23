@@ -38,12 +38,16 @@ const __1 = require("../../../");
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
 const { Continent, Languages, HelloWorld, Respond } = (0, __1.importPrompts)(fullPath);
 const COUNT = 4;
-const PickLocale = (0, __1.createDynamic)("PickLocale", [{ Continent }, { Languages }]);
-const RespondToAll = (0, __1.createDynamic)("RespondToAll", [{ Respond }]);
+const context = { count: COUNT };
+const PickLocale = (0, __1.createDynamic)("PickLocale", context, [
+    { Continent },
+    { Languages },
+]);
+const RespondToAll = (0, __1.createDynamic)("RespondToAll", context, [{ Respond }]);
 exports.SayHelloWorld = (0, __1.createDynamic)({
     name: "SayHelloWorld",
     kind: __1.TOT,
-    context: { Count: COUNT },
+    context,
     prompts: (0, __1.Iterator)([{ HelloWorld }], { iterations: COUNT }),
     before: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield PickLocale.run(state); }),
     after: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield RespondToAll.run(state); }),

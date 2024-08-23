@@ -11,6 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const dynamics_1 = require("./dynamics");
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield dynamics_1.SayHelloWorld.run();
-    console.log(JSON.stringify(result, null, 2), "\n");
+    const result = yield dynamics_1.SayHelloWorld.run({ seed: 523452345235 });
+    // console.log(JSON.stringify(result, null, 2), "\n");
 }))();

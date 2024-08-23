@@ -16,63 +16,49 @@ exports.defaultDependencies = void 0;
 const store_1 = require("../../store");
 const logger_1 = __importDefault(require("../../middleware/logger"));
 exports.defaultDependencies = {
-    before: () => __awaiter(void 0, void 0, void 0, function* () {
-        logger_1.default.info("Running before hook");
+    before: () => __awaiter(void 0, void 0, void 0, function* () { }),
+    after: () => __awaiter(void 0, void 0, void 0, function* () { }),
+    runChainOfThought: (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
+        logger_1.default.info(`Running ${dynamic.name} Chain of Thought Dynamic`);
+        for (const prompt of dynamic.prompts || []) {
+            const { state, context } = store_1.useStore.getState();
+            const generation = yield prompt.run(Object.assign(Object.assign({}, state), { context }));
+            store_1.useStore.getState().setState(dynamic.name, prompt.name, generation);
+        }
     }),
-    after: () => __awaiter(void 0, void 0, void 0, function* () {
-        logger_1.default.info("Running after hook");
+    runTreeOfThought: (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
+        logger_1.default.info(`Running ${dynamic.name} Tree of Thought Dynamic`);
+        yield Promise.all((dynamic.prompts || []).map((prompt) => __awaiter(void 0, void 0, void 0, function* () {
+            const { state, context } = store_1.useStore.getState();
+            const generation = yield prompt.run(Object.assign(Object.assign({}, state), { context }));
+            store_1.useStore.getState().setState(dynamic.name, prompt.name, generation);
+        })));
     }),
-    runChainOfThought(dynamic, initialState) {
-        return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.info(`Running ${dynamic.name} Chain of Thought Dynamic`);
-            const { state: storeState, setState } = store_1.useStore.getState();
-            let state = Object.assign(Object.assign({}, initialState), storeState);
-            for (const prompt of dynamic.prompts || []) {
-                state = store_1.useStore.getState();
-                const generation = yield prompt.run(state.state);
-                setState(dynamic.name, prompt.name, generation);
-            }
-            return store_1.useStore.getState();
-        });
-    },
-    runTreeOfThought(dynamic, initialState) {
-        return __awaiter(this, void 0, void 0, function* () {
-            logger_1.default.info(`Running ${dynamic.name} Tree of Thought Dynamic`);
-            const { state: storeState, setState } = store_1.useStore.getState();
-            let state = Object.assign(Object.assign({}, initialState), storeState);
-            yield Promise.all((dynamic.prompts || []).map((prompt) => __awaiter(this, void 0, void 0, function* () {
-                const generation = yield prompt.run(state.state);
-                setState(dynamic.name, prompt.name, generation);
-            })));
-            return store_1.useStore.getState();
-        });
-    },
     run(initialState, dynamic) {
         return __awaiter(this, void 0, void 0, function* () {
-            let state = {};
-            const { state: storeState } = store_1.useStore.getState();
-            state = Object.assign(Object.assign({}, storeState), initialState);
+            const { initializeState, setContext } = store_1.useStore.getState();
+            // Initialize state and context
+            initializeState(initialState);
+            setContext(dynamic === null || dynamic === void 0 ? void 0 : dynamic.context);
             if (dynamic.before) {
-                logger_1.default.info("Running before hook");
-                const beforeResult = (yield dynamic.before(state));
-                state = Object.assign(Object.assign({}, state), beforeResult);
+                const beforeResult = (yield dynamic.before(Object.assign({}, store_1.useStore.getState())));
+                initializeState(beforeResult);
             }
             const strategy = dynamic.kind === "chainOfThought"
                 ? this.runChainOfThought
                 : this.runTreeOfThought;
             if (strategy) {
-                state = Object.assign(Object.assign({}, state), (yield strategy(dynamic, state)));
+                yield strategy(dynamic);
             }
             else {
                 logger_1.default.error("Unknown dynamic type");
                 return {};
             }
             if (dynamic.after) {
-                logger_1.default.info("Running after hook");
-                const afterResult = (yield dynamic.after(state));
-                state = Object.assign(Object.assign({}, state), afterResult);
+                const afterResult = (yield dynamic.after(Object.assign({}, store_1.useStore.getState())));
+                initializeState(afterResult);
             }
-            return state;
+            return store_1.useStore.getState().state;
         });
     },
 };

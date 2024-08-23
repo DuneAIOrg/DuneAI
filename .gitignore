@@ -9,8 +9,6 @@ yarn.lock
 .pnp/
 .pnp.js
 
-dist/
-
 # TypeScript
 *.tsbuildinfo
 

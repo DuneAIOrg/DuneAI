@@ -16,6 +16,7 @@ exports.defaultDependencies = void 0;
 const mustache_1 = __importDefault(require("mustache"));
 const adapters_1 = require("../../adapters");
 const utils_1 = require("../../utils");
+const logger_1 = __importDefault(require("../../middleware/logger"));
 exports.defaultDependencies = {
     run(prompt, state) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -28,10 +29,19 @@ exports.defaultDependencies = {
                     iterationValue,
                 })) ||
                 prompt.content;
-            const interpolatedContent = mustache_1.default.render(promptWithIteration, Object.assign(Object.assign({}, state), { iterationValue,
+            const interpolatedContent = mustache_1.default.render(promptWithIteration, Object.assign(Object.assign(Object.assign({}, state), {
+                C: state.context,
+                Context: state.context,
+            }), { iterationValue,
                 iteration }));
-            console.log(`Invoking Prompt: ${prompt.name}`);
+            const { tokenCount: sentTokenCount, modelUsed: sentModelUsed } = (0, utils_1.countTokens)(interpolatedContent, prompt.model);
+            logger_1.default.info(`Invoking Prompt ${prompt.name}, ${sentTokenCount} tokens sent (${sentModelUsed})`);
+            const startTime = Date.now();
             const aiResponse = (yield (0, adapters_1.ask)(interpolatedContent, prompt.model));
+            const endTime = Date.now();
+            const elapsedTime = endTime - startTime;
+            const { tokenCount: responseTokenCount, modelUsed: responseModelUsed } = (0, utils_1.countTokens)(aiResponse, prompt.model);
+            logger_1.default.info(`Completed Prompt ${prompt.name}, ${responseTokenCount} tokens received (${responseModelUsed}) in ${elapsedTime}ms`);
             return aiResponse;
         });
     },

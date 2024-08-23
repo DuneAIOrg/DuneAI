@@ -4,25 +4,25 @@ exports.createDynamic = void 0;
 const dependencies_1 = require("./dependencies");
 const Prompt_1 = require("../Prompt");
 const store_1 = require("../../store");
-const createDynamic = (params, promptsOrOverrides = {}, overrides = {}) => {
+const createDynamic = (params, context, prompts = {}, overrides = {}) => {
     var _a, _b, _c;
     let dynamicParams;
     let dynamicOverrides;
     if (typeof params === "string") {
         dynamicParams = {
             name: params,
-            prompts: promptsOrOverrides,
+            context: context,
+            prompts: prompts,
         };
         dynamicOverrides = overrides;
     }
     else {
         dynamicParams = params;
-        dynamicOverrides = promptsOrOverrides;
+        dynamicOverrides = prompts;
     }
     const dynamicDependencies = Object.assign(Object.assign({}, dependencies_1.defaultDependencies), dynamicOverrides);
-    const { getState } = store_1.useStore;
-    const { setContext } = getState();
-    setContext(dynamicParams.context);
+    const { setContext } = store_1.useStore.getState();
+    setContext(context !== null && context !== void 0 ? context : dynamicParams.context);
     const instantiatedPrompts = ((_a = dynamicParams === null || dynamicParams === void 0 ? void 0 : dynamicParams.prompts) === null || _a === void 0 ? void 0 : _a.map((prompt) => {
         if ("name" in prompt && "content" in prompt) {
             return prompt;
@@ -38,5 +38,5 @@ const createDynamic = (params, promptsOrOverrides = {}, overrides = {}) => {
         }, before: dynamicParams.before || dynamicDependencies.before, after: dynamicParams.after || dynamicDependencies.after }));
 };
 exports.createDynamic = createDynamic;
-const Dynamic = (params, promptsOrOverrides = {}, overrides = {}) => (0, exports.createDynamic)(params, promptsOrOverrides, overrides);
+const Dynamic = (params, context = {}, prompts = {}, overrides = {}) => (0, exports.createDynamic)(params, context, prompts, overrides);
 exports.default = Dynamic;

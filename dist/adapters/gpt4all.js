@@ -41,7 +41,6 @@ function getModel(modelPath_1) {
         let model = null;
         try {
             model = yield gpt.loadModel(modelPath, { device });
-            console.log("Model loaded successfully:", modelPath);
         }
         catch (error) {
             console.error("Failed to load model:", error);
@@ -75,7 +74,6 @@ exports.ask = ask;
 const disposeModel = (model, name) => {
     if (model) {
         model.dispose();
-        console.log(`Model instance for ${name} disposed`);
     }
 };
 exports.disposeModel = disposeModel;
