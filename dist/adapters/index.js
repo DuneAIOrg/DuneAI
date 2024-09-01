@@ -68,9 +68,13 @@ exports.MODELS = {
 // Unified ask method that delegates to the correct adapter based on the modelKey
 function ask(prompt, modelKey, options) {
     return __awaiter(this, void 0, void 0, function* () {
-        const adapterKey = exports.MODELS[modelKey].adapter;
-        const model = exports.MODELS[modelKey].model;
+        var _a;
+        // @ts-ignore
+        const adapterKey = 
+        // @ts-ignore
+        ((_a = exports.MODELS[modelKey]) === null || _a === void 0 ? void 0 : _a.adapter) || (options === null || options === void 0 ? void 0 : options.adapter) || exports.ADAPTERS["GPT4ALL"];
+        // @ts-ignore
         const adapter = exports.ADAPTERS[adapterKey];
-        return adapter.ask(prompt, Object.assign({ model }, options));
+        return adapter.ask(prompt, Object.assign({ model: modelKey }, options));
     });
 }

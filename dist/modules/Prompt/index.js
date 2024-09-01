@@ -10,7 +10,7 @@ const dependencies_1 = require("./dependencies");
 const createPrompt = (params, overrides = {}) => {
     var _a, _b;
     const promptDependencies = Object.assign(Object.assign({}, dependencies_1.defaultDependencies), overrides);
-    return Object.freeze(Object.assign(Object.assign({ name: (_a = params.name) !== null && _a !== void 0 ? _a : "defaultPrompt", model: (_b = params.model) !== null && _b !== void 0 ? _b : "LLAMA3" }, params), { run: function (state) {
+    return Object.freeze(Object.assign(Object.assign({ name: (_a = params.name) !== null && _a !== void 0 ? _a : "defaultPrompt", model: params.model, adapter: (_b = params.adapter) !== null && _b !== void 0 ? _b : "GPT4ALL" }, params), { run: function (state) {
             return promptDependencies.run(this, state);
         } }));
 };

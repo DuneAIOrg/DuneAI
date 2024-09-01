@@ -37,7 +37,9 @@ exports.defaultDependencies = {
             const { tokenCount: sentTokenCount, modelUsed: sentModelUsed } = (0, utils_1.countTokens)(interpolatedContent, prompt.model);
             logger_1.default.info(`Invoking Prompt ${prompt.name}, ${sentTokenCount} tokens sent (${sentModelUsed})`);
             const startTime = Date.now();
-            const aiResponse = (yield (0, adapters_1.ask)(interpolatedContent, prompt.model));
+            const aiResponse = (yield (0, adapters_1.ask)(interpolatedContent, prompt.model, {
+                adapter: prompt.adapter,
+            }));
             const endTime = Date.now();
             const elapsedTime = endTime - startTime;
             const { tokenCount: responseTokenCount, modelUsed: responseModelUsed } = (0, utils_1.countTokens)(aiResponse, prompt.model);

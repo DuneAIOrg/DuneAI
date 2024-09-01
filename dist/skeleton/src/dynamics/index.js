@@ -40,7 +40,12 @@ const { Continent, Languages, HelloWorld, Respond } = (0, __1.importPrompts)(ful
 const COUNT = 4;
 const context = { count: COUNT };
 const PickLocale = (0, __1.createDynamic)("PickLocale", context, [
-    { Continent },
+    {
+        name: "Continent",
+        content: Continent,
+        model: "gpt-4o-mini",
+        adapter: "OPENAI",
+    },
     { Languages },
 ]);
 const RespondToAll = (0, __1.createDynamic)("RespondToAll", context, [{ Respond }]);
@@ -48,6 +53,8 @@ exports.SayHelloWorld = (0, __1.createDynamic)({
     name: "SayHelloWorld",
     kind: __1.TOT,
     context,
+    model: "gpt-4o-mini",
+    adapter: "OPENAI",
     prompts: (0, __1.Iterator)([{ HelloWorld }], { iterations: COUNT }),
     before: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield PickLocale.run(state); }),
     after: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield RespondToAll.run(state); }),

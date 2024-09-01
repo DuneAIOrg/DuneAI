@@ -25,18 +25,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ask = exports.openai = void 0;
 const openai_1 = __importDefault(require("openai"));
-// import { OPENAI_API_KEY } from "../";
 const throttling_1 = require("../utils/throttling");
+require("dotenv/config");
 exports.openai = new openai_1.default({
-// apiKey: OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY,
 });
-const getCompletion = (content_1, ...args_1) => __awaiter(void 0, [content_1, ...args_1], void 0, function* (content, _a = { model: "GPT_FOUR" }) {
-    var _b;
-    var { model } = _a, options = __rest(_a, ["model"]);
-    const params = Object.assign({ messages: [{ role: "user", content }], model }, options);
+const getCompletion = (content, options) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const params = Object.assign({ messages: [{ role: "user", content }] }, options);
     // @ts-ignore
-    const chatCompletion = yield exports.openai.chat.completions.create(params);
-    return (_b = chatCompletion.choices[0].message) === null || _b === void 0 ? void 0 : _b.content;
+    const { adapter: _ } = params, openaiParams = __rest(params, ["adapter"]);
+    // @ts-ignore
+    const chatCompletion = yield exports.openai.chat.completions.create(openaiParams);
+    return (_a = chatCompletion.choices[0].message) === null || _a === void 0 ? void 0 : _a.content;
 });
 const ask = (prompt, options) => __awaiter(void 0, void 0, void 0, function* () {
     return (yield (0, throttling_1.throttledOperation)(() => getCompletion(prompt, options), {
