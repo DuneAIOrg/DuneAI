@@ -1,7 +1,13 @@
 import { Dependencies, defaultDependencies } from "./dependencies";
-import { DynamicType, PromptType, NestedObject } from "../../types";
+import { DynamicType, PromptType, NestedObject, Adapter } from "../../types";
+import { COT } from "../../";
 import { createPrompt } from "../Prompt";
 import { useStore } from "../../store";
+import "dotenv/config";
+
+export const MODEL =
+  process.env.DEFAULT_MODEL || "Meta-Llama-3-8B-Instruct.Q4_0.gguf";
+export const ADAPTER = process.env.DEFAULT_ADAPTER || "GPT4ALL";
 
 export const createDynamic = (
   params: Partial<DynamicType> | string,
@@ -34,18 +40,26 @@ export const createDynamic = (
 
   const instantiatedPrompts: PromptType[] =
     dynamicParams?.prompts?.map((prompt) => {
+      const model = dynamicParams.model || MODEL;
+      const adapter = dynamicParams.adapter || (ADAPTER as Adapter);
       if ("name" in prompt && "content" in prompt) {
-        return prompt as PromptType;
+        return createPrompt({
+          model,
+          adapter,
+          ...prompt,
+        });
       } else {
         const key = Object.keys(prompt)[0];
         const value = (prompt as Record<string, string>)[key];
-        return createPrompt({ name: key, content: value });
+        return createPrompt({ name: key, content: value, model, adapter });
       }
     }) || [];
 
-  return Object.freeze({
-    kind: dynamicParams.kind ?? "chainOfThought",
+  return {
+    kind: dynamicParams.kind ?? COT,
     name: dynamicParams.name ?? "defaultDynamic",
+    model: dynamicParams.model ?? MODEL,
+    adapter: dynamicParams.adapter ?? (ADAPTER as Adapter),
     ...dynamicParams,
     prompts: instantiatedPrompts,
     run: function (initialState) {
@@ -56,7 +70,7 @@ export const createDynamic = (
     },
     before: dynamicParams.before || dynamicDependencies.before,
     after: dynamicParams.after || dynamicDependencies.after,
-  });
+  };
 };
 
 const Dynamic = (

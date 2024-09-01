@@ -14,7 +14,8 @@ export const createPrompt = (
 
   return Object.freeze({
     name: params.name ?? "defaultPrompt",
-    model: params.model ?? "LLAMA3",
+    model: params.model,
+    adapter: params.adapter ?? "GPT4ALL",
     ...params,
     run: function (state: Record<string, any>) {
       return promptDependencies.run(this as unknown as PromptType, state);

@@ -1,5 +1,7 @@
-import { PromptType } from "../../types";
+import { PromptType, Adapter } from "../../types";
 import { createPrompt } from "../Prompt";
+
+import { MODEL, ADAPTER } from "../Dynamic";
 
 type IterationOptions = {
   iterations?: number;
@@ -33,6 +35,28 @@ export default function Iterator(
     );
   }
 
+  const instantiatedPrompts: PromptType[] =
+    items?.map((prompt) => {
+      const model = prompt.model || MODEL;
+      const adapter = prompt.adapter || (ADAPTER as Adapter);
+      if ("name" in prompt && "content" in prompt) {
+        return createPrompt({
+          model,
+          adapter: adapter as Adapter,
+          ...prompt,
+        });
+      } else {
+        const key = Object.keys(prompt)[0];
+        const value = (prompt as Record<string, string>)[key];
+        return createPrompt({
+          name: key,
+          content: value,
+          model,
+          adapter: adapter as Adapter,
+        });
+      }
+    }) || [];
+
   const instantiatedItems: PromptType[] = items.map((item) => {
     if ("name" in item && "content" in item) {
       return item as PromptType;
@@ -41,7 +65,12 @@ export default function Iterator(
       // @ts-ignore
       const value = item[key];
       // @ts-ignore
-      return createPrompt({ name: key, content: value });
+      return createPrompt({
+        name: key,
+        content: value,
+        model: MODEL,
+        adapter: ADAPTER as Adapter,
+      });
     }
   });
 

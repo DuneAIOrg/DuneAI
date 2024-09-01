@@ -1,23 +1,23 @@
 import OpenAI from "openai";
-// import { OPENAI_API_KEY } from "../";
 import { throttledOperation } from "../utils/throttling";
+import "dotenv/config";
 
 export const openai = new OpenAI({
-  // apiKey: OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-const getCompletion = async (
-  content: string,
-  { model, ...options } = { model: "GPT_FOUR" },
-) => {
-  const params: OpenAI.Chat.ChatCompletionCreateParams = {
+const getCompletion = async (content: string, options: {}) => {
+  const params = {
     messages: [{ role: "user", content }],
-    model,
     ...options,
   };
   // @ts-ignore
+  const { adapter: _, ...openaiParams } = params;
+  // @ts-ignore
   const chatCompletion: OpenAI.Chat.ChatCompletion =
-    await openai.chat.completions.create(params);
+    await openai.chat.completions.create(
+      openaiParams as OpenAI.Chat.ChatCompletionCreateParams,
+    );
   return chatCompletion.choices[0].message?.content;
 };
 

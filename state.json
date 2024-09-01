@@ -2,17 +2,17 @@
   "state": {
     "seed": 523452345235,
     "PickLocale": {
-      "Continent": "What a unique seed value!\n\nUsing the provided seed value, I generated a random number using the modulo operator. The result is:\n\n52345 (mod 7) = 2\n\nThis corresponds to the continent of... **North America**!\n\nSo, the random continent I picked is North America.",
-      "Languages": "Exciting! Since the random continent is North America, here are 4 languages spoken in that region:\n\n1. English\n2. Spanish\n3. French\n4. Inuktitut"
+      "Continent": "The random continent I picked is Asia. The seed value I used is 523452345235.",
+      "Languages": "1. Mandarin Chinese\n2. Hindi\n3. Arabic\n4. Japanese"
     },
     "SayHelloWorld": {
-      "HelloWorld_iteration_1": "Hello world: Hello World",
-      "HelloWorld_iteration_2": "Hola mundo",
-      "HelloWorld_iteration_3": "Bonjour monde!",
-      "HelloWorld_iteration_4": "ᐃᓱᒪᕋᐅᖃ!"
+      "HelloWorld_iteration_1": "你好，世界",
+      "HelloWorld_iteration_2": "नमस्ते दुनिया",
+      "HelloWorld_iteration_3": "مرحبا بالعالم",
+      "HelloWorld_iteration_4": "こんにちは世界"
     },
     "RespondToAll": {
-      "Respond": "Here are the hellos:\n\n1. English: Hello!\n2. Spanish: Hola!\n3. French: Bonjour!\n4. Inuktitut: ᐃᓱ! (Isuma!)"
+      "Respond": "1. 你好\n2. नमस्ते\n3. مرحبا\n4. こんにちは"
     }
   },
   "context": {

@@ -23,6 +23,7 @@
     "chalk": "^5.3.0",
     "chalk-animation": "^2.0.3",
     "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
     "download-git-repo": "^3.0.2",
     "duneai": "github:DuneAIOrg/duneai",
     "fs-extra": "^11.2.0",

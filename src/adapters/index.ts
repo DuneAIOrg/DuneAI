@@ -35,11 +35,14 @@ export const MODELS = {
 // Unified ask method that delegates to the correct adapter based on the modelKey
 export async function ask(
   prompt: string | Record<string, any>,
-  modelKey: keyof typeof MODELS,
+  modelKey: keyof typeof MODELS | string,
   options?: any,
 ) {
-  const adapterKey = MODELS[modelKey].adapter;
-  const model = MODELS[modelKey].model;
+  // @ts-ignore
+  const adapterKey =
+    // @ts-ignore
+    MODELS[modelKey]?.adapter || options?.adapter || ADAPTERS["GPT4ALL"];
+  // @ts-ignore
   const adapter = ADAPTERS[adapterKey];
-  return adapter.ask(prompt, { model, ...options });
+  return adapter.ask(prompt, { model: modelKey, ...options });
 }

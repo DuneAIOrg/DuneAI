@@ -36,16 +36,18 @@ export const defaultDependencies: Dependencies = {
     });
 
     const { tokenCount: sentTokenCount, modelUsed: sentModelUsed } =
-      countTokens(interpolatedContent, prompt.model);
+      countTokens(interpolatedContent, prompt.model as string);
     Logger.info(
       `Invoking Prompt ${prompt.name}, ${sentTokenCount} tokens sent (${sentModelUsed})`,
     );
     const startTime = Date.now();
-    const aiResponse = (await ask(interpolatedContent, prompt.model)) as string;
+    const aiResponse = (await ask(interpolatedContent, prompt.model as string, {
+      adapter: prompt.adapter,
+    })) as string;
     const endTime = Date.now();
     const elapsedTime = endTime - startTime;
     const { tokenCount: responseTokenCount, modelUsed: responseModelUsed } =
-      countTokens(aiResponse, prompt.model);
+      countTokens(aiResponse, prompt.model as string);
     Logger.info(
       `Completed Prompt ${prompt.name}, ${responseTokenCount} tokens received (${responseModelUsed}) in ${elapsedTime}ms`,
     );

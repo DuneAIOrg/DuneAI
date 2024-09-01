@@ -1,12 +1,11 @@
-export type AIModel = (typeof MODELS)[keyof typeof MODELS];
-
 export type DynamicTypeKind = "chainOfThought" | "treeOfThought";
+export type Adapter = "GPT4ALL" | "OPENAI" | "SDWEBUI";
 
 export type Hook = (state: Record<string, any>) => void | Promise<void> | any;
+export type AIModel = string;
 
 export type PromptType = {
   name: string;
-  model: AIModel;
   run: (state: Record<string, any>) => Promise<string>;
   content?: string;
   options?: object;
@@ -14,6 +13,8 @@ export type PromptType = {
     iteration?: number;
     iterationValue?: string;
   };
+  model?: AIModel;
+  adapter?: Adapter;
 };
 
 export type DynamicType = {
@@ -27,6 +28,8 @@ export type DynamicType = {
   context?: any;
   before?: Hook;
   after?: Hook;
+  model?: AIModel;
+  adapter?: Adapter;
 };
 
 export type IterationOptions = {
