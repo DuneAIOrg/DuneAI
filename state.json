@@ -2,17 +2,17 @@
   "state": {
     "seed": 523452345235,
     "PickLocale": {
-      "Continent": "The random continent I picked is Asia. The seed value I used is 523452345235.",
-      "Languages": "1. Mandarin Chinese\n2. Hindi\n3. Arabic\n4. Japanese"
+      "Continent": "The random continent I picked is South America. The seed value I used is 523452345235.",
+      "Languages": "Here are four languages spoken in South America:\n\n1. Spanish\n2. Portuguese\n3. Quechua\n4. Guarani"
     },
     "SayHelloWorld": {
-      "HelloWorld_iteration_1": "你好，世界",
-      "HelloWorld_iteration_2": "नमस्ते दुनिया",
-      "HelloWorld_iteration_3": "مرحبا بالعالم",
-      "HelloWorld_iteration_4": "こんにちは世界"
+      "HelloWorld_iteration_1": "Hola mundo",
+      "HelloWorld_iteration_4": "Mba'éichapa yvoty!",
+      "HelloWorld_iteration_2": "Olá mundo",
+      "HelloWorld_iteration_3": "Ñukaka rimaykunki, \"Ñukaka huk llaqtayki.\""
     },
     "RespondToAll": {
-      "Respond": "1. 你好\n2. नमस्ते\n3. مرحبا\n4. こんにちは"
+      "Respond": "1. ¡Hola!\n2. Olá!\n3. Rimaykullayki!\n4. Avy'aitépe!"
     }
   },
   "context": {

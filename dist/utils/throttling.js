@@ -12,15 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.throttledOperation = exports.MAX_CONCURRENT = exports.RETRY_COUNT = exports.DELAY = void 0;
+exports.throttledOperation = exports.MAX_CONCURRENT = exports.MAX_RPM = exports.RETRY_COUNT = exports.DELAY = void 0;
 const bottleneck_1 = __importDefault(require("bottleneck"));
 const _1 = require("./");
 exports.DELAY = 500;
 exports.RETRY_COUNT = 3;
-exports.MAX_CONCURRENT = 5;
+exports.MAX_RPM = 10000;
+exports.MAX_CONCURRENT = exports.MAX_RPM;
 // Setup for the bottleneck limiter
 const limiter = new bottleneck_1.default({
-    minTime: exports.DELAY,
+    minTime: 60000 / exports.MAX_RPM,
     maxConcurrent: exports.MAX_CONCURRENT,
 });
 // Generalized function to perform throttled operations with retries
