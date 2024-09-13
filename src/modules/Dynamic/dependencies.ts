@@ -31,7 +31,9 @@ export const defaultDependencies: Dependencies = {
         context,
       });
 
-      useStore.getState().setState(dynamic.name, prompt.name, generation);
+      useStore
+        .getState()
+        .setState(dynamic.name, (prompt as PromptType).name, generation);
     }
   },
   runTreeOfThought: async (dynamic) => {
@@ -44,7 +46,7 @@ export const defaultDependencies: Dependencies = {
           ...state,
           context,
         });
-        useStore.getState().setState(dynamic.name, prompt.name, generation);
+        useStore.getState().setState(dynamic.name, (prompt as PromptType)?.name, generation);
       }),
     );
   },

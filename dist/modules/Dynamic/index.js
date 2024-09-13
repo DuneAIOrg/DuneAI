@@ -27,10 +27,12 @@ const createDynamic = (params, context, prompts = {}, overrides = {}) => {
     const dynamicDependencies = Object.assign(Object.assign({}, dependencies_1.defaultDependencies), dynamicOverrides);
     const { setContext } = store_1.useStore.getState();
     setContext(context !== null && context !== void 0 ? context : dynamicParams.context);
-    const instantiatedPrompts = ((_a = dynamicParams === null || dynamicParams === void 0 ? void 0 : dynamicParams.prompts) === null || _a === void 0 ? void 0 : _a.map((prompt) => {
+    const instantiatedPrompts = 
+    // @ts-ignore
+    ((_a = dynamicParams === null || dynamicParams === void 0 ? void 0 : dynamicParams.prompts) === null || _a === void 0 ? void 0 : _a.map((prompt) => {
         const model = dynamicParams.model || exports.MODEL;
         const adapter = dynamicParams.adapter || exports.ADAPTER;
-        if ("name" in prompt && "content" in prompt) {
+        if (typeof prompt === "object" && "name" in prompt && "content" in prompt) {
             return (0, Prompt_1.createPrompt)(Object.assign({ model,
                 adapter }, prompt));
         }

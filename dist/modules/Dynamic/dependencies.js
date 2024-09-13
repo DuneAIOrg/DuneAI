@@ -23,7 +23,9 @@ exports.defaultDependencies = {
         for (const prompt of dynamic.prompts || []) {
             const { state, context } = store_1.useStore.getState();
             const generation = yield prompt.run(Object.assign(Object.assign({}, state), { context }));
-            store_1.useStore.getState().setState(dynamic.name, prompt.name, generation);
+            store_1.useStore
+                .getState()
+                .setState(dynamic.name, prompt.name, generation);
         }
     }),
     runTreeOfThought: (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
@@ -31,7 +33,7 @@ exports.defaultDependencies = {
         yield Promise.all((dynamic.prompts || []).map((prompt) => __awaiter(void 0, void 0, void 0, function* () {
             const { state, context } = store_1.useStore.getState();
             const generation = yield prompt.run(Object.assign(Object.assign({}, state), { context }));
-            store_1.useStore.getState().setState(dynamic.name, prompt.name, generation);
+            store_1.useStore.getState().setState(dynamic.name, prompt === null || prompt === void 0 ? void 0 : prompt.name, generation);
         })));
     }),
     run(initialState, dynamic) {

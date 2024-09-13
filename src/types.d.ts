@@ -24,7 +24,9 @@ export type DynamicType = {
     initialState?: Record<string, any>,
     dynamic?: DynamicType,
   ) => Promise<Record<string, any>>;
-  prompts?: (PromptType | Record<string, string>)[];
+  prompts?:
+    | (string | KVP | PromptType)[]
+    | ((input: string | KVP | PromptType) => PromptType)[];
   context?: any;
   before?: Hook;
   after?: Hook;
@@ -48,4 +50,8 @@ export interface AppState {
   setState: (dynamicName: string, key: string, value: any) => void;
   setContext: (context: NestedObject) => void;
   initializeState: (initialState: Record<string, any>) => void;
+}
+
+export interface KVP {
+  [key: string]: string | undefined;
 }

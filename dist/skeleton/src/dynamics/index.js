@@ -35,6 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SayHelloWorld = void 0;
 const path = __importStar(require("path"));
 const __1 = require("../../../");
+const Cybernetics_1 = require("../../../modules/Cybernetics");
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
 const { Continent, Languages, HelloWorld, Respond } = (0, __1.importPrompts)(fullPath);
 const COUNT = 4;
@@ -46,16 +47,24 @@ const PickLocale = (0, __1.createDynamic)("PickLocale", context, [
         model: "gpt-4o-mini",
         adapter: "OPENAI",
     },
-    { Languages },
+    {
+        name: "Languages",
+        content: Languages,
+        model: "gpt-4o-mini",
+        adapter: "OPENAI",
+    },
 ]);
 const RespondToAll = (0, __1.createDynamic)("RespondToAll", context, [{ Respond }]);
-exports.SayHelloWorld = (0, __1.createDynamic)({
-    name: "SayHelloWorld",
-    kind: __1.TOT,
-    context,
-    model: "gpt-4o-mini",
-    adapter: "OPENAI",
-    prompts: (0, __1.Iterator)([{ HelloWorld }], { iterations: COUNT }),
-    before: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield PickLocale.run(state); }),
-    after: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield RespondToAll.run(state); }),
+const SayHelloWorld = () => __awaiter(void 0, void 0, void 0, function* () {
+    return (0, __1.createDynamic)({
+        name: "SayHelloWorld",
+        kind: __1.TOT,
+        context,
+        model: "gpt-4o-mini",
+        adapter: "OPENAI",
+        prompts: yield (0, Cybernetics_1.Accumulator)({ HelloWorld }, { replicate: COUNT }),
+        before: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield PickLocale.run(state); }),
+        after: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield RespondToAll.run(state); }),
+    });
 });
+exports.SayHelloWorld = SayHelloWorld;

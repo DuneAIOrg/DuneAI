@@ -1,9 +1,11 @@
 import { Dependencies, defaultDependencies } from "./dependencies";
-import { DynamicType, PromptType, NestedObject, Adapter } from "../../types";
+import { DynamicType, PromptType, NestedObject, Adapter, KVP } from "../../types";
 import { COT } from "../../";
 import { createPrompt } from "../Prompt";
 import { useStore } from "../../store";
 import "dotenv/config";
+
+import { LAMBDA } from "../Cybernetics";
 
 export const MODEL =
   process.env.DEFAULT_MODEL || "Meta-Llama-3-8B-Instruct.Q4_0.gguf";
@@ -39,19 +41,23 @@ export const createDynamic = (
   setContext(context ?? dynamicParams.context);
 
   const instantiatedPrompts: PromptType[] =
-    dynamicParams?.prompts?.map((prompt) => {
-      const model = dynamicParams.model || MODEL;
-      const adapter = dynamicParams.adapter || (ADAPTER as Adapter);
-      if ("name" in prompt && "content" in prompt) {
+    // @ts-ignore
+    dynamicParams?.prompts?.map((prompt: string | PromptType | KVP) => {
+      if (typeof prompt === "string") {
+        return createPrompt({ name: LAMBDA, content: prompt, model: dynamicParams.model || MODEL, adapter: dynamicParams.adapter || (ADAPTER as Adapter) });
+      } else if (typeof prompt === "object" && prompt?.content) {
         return createPrompt({
-          model,
-          adapter,
+          model: dynamicParams.model || MODEL,
+          adapter: dynamicParams.adapter || (ADAPTER as Adapter),
           ...prompt,
         });
       } else {
-        const key = Object.keys(prompt)[0];
-        const value = (prompt as Record<string, string>)[key];
-        return createPrompt({ name: key, content: value, model, adapter });
+        return createPrompt({
+          model: dynamicParams.model || MODEL,
+          adapter: dynamicParams.adapter || (ADAPTER as Adapter),
+          name: Object.keys(prompt)[0],
+          content: Object.values(prompt)[0] as string,
+        });
       }
     }) || [];
 
