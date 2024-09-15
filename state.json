@@ -1,17 +1,17 @@
 {
   "state": {
     "PickLocale": {
-      "Continent": "Let's use Africa as a random continent. The seed value I used is \"Africa\".",
-      "Languages": "1. Swahili  \n2. Amharic  \n3. Zulu  \n4. Hausa"
+      "Continent": "I have chosen the continent of Africa as the random seed. The seed value used is \"Africa.\"",
+      "Languages": "1. Swahili\n2. Amharic\n3. Hausa\n4. Zulu"
     },
     "SayHelloWorld": {
-      "HelloWorld_1": "Habari dunia",
+      "HelloWorld_1": "habari dunia",
       "HelloWorld_0": "Hello world",
-      "HelloWorld_3": "sawubona umhlaba",
-      "HelloWorld_2": "ሰላም ዓለም"
+      "HelloWorld_3": "Sannu duniya",
+      "HelloWorld_2": "ሰላም ምርቃት"
     },
     "RespondToAll": {
-      "Respond": "1. Jambo!\n2. ኤልጎ!\n3. Sawubona!\n4. Salam!"
+      "Respond": "1. Jambo\n2. Selam\n3. Sannu\n4. Sawubona"
     }
   },
   "context": {

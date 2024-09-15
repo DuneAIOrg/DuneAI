@@ -20,8 +20,6 @@ const PickLocale = createDynamic("PickLocale", context, [
   { 
     name: "Languages",
     content: Languages,
-    model: "gpt-4o-mini",
-    adapter: "OPENAI",
   },
 ]);
 const RespondToAll = createDynamic("RespondToAll", context, [{ Respond }]);
@@ -32,7 +30,8 @@ export const SayHelloWorld: () => Promise<DynamicType> = async () => createDynam
   context,
   model: "gpt-4o-mini",
   adapter: "OPENAI",
-  prompts: await Accumulator({ HelloWorld }, { replicate: COUNT }),
+  // @ts-ignore
+  prompts: Accumulator([{ HelloWorld }], { replicate: COUNT }),
   before: async ({ state }) => await PickLocale.run(state),
   after: async ({ state }) => await RespondToAll.run(state),
 });

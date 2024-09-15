@@ -1,6 +1,6 @@
 import Prompt, { importPrompts } from "./modules/Prompt";
 import Dynamic, { createDynamic } from "./modules/Dynamic";
-import { Accumulator } from "./modules/Cybernetics";
+import { Accumulator, Inverter } from "./modules/Cybernetics";
 
 const TOT = "treeOfThought";
 const COT = "chainOfThought";
@@ -24,6 +24,7 @@ export default {
   Prompt,
   Dynamic,
   Accumulator,
+  Inverter,
   createDynamic,
   importPrompts,
   TOT,

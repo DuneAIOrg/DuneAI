@@ -6,22 +6,11 @@ import { BaseCybernetic, Cybernetic, LAMBDA } from "../index";
 
 const DEFAULT_DELIMITER = ",";
 
-const replicate = true;
-const aggregate = true;
-const distribute = true;
-
-const distributeFeedback = (data: string) => `
-Convert the following string into a format that can be parsed as a JavaScript array: ${data}
-Return the array as a string that can be safely parsed.`;
-
-const aggregateFeedback = (data: string) => `
-Convert the following string into a format that can be parsed as a JavaScript array: ${data}
-Return the array as a string that can be safely parsed.`;
-
 interface OptionsType {
   state?: KVP;
   context?: KVP;
   feedback?: string;
+  completion?: string;
   aggregate?: string | ((context?: KVP, state?: KVP) => string);
   replicate?: number | ((context?: KVP, state?: KVP) => number);
   distribute?: string | ((context?: KVP, state?: KVP) => string);
@@ -43,17 +32,12 @@ const pickContent = (prompt: KVP | PromptType | string): string | false =>
       : false;
 
 const performReplicate = (
-  prompt: PromptType | KVP | string,
+  prompts: (PromptType | KVP | string)[],
   replicate: number | ((context?: KVP, state?: KVP) => number),
   context?: KVP,
   state?: KVP,
 ): Array<Partial<PromptType>> => {
   let replicateCount: number = 0;
-  const promptName = pickName(prompt);
-  const promptContent = pickContent(prompt);
-  const promptObject = typeof prompt === "object" 
-    ? prompt 
-    : { [promptName || LAMBDA]: promptContent };
 
   if (typeof replicate === "function") {
     replicateCount = replicate(context, state);
@@ -61,58 +45,79 @@ const performReplicate = (
     replicateCount = replicate;
   }
 
-  const result = Array(replicateCount)
-    .fill(promptObject)
-    .map((_, key) => {
-      const newKey = `${promptName}_${key}`;
-      return {
-          ...promptObject,
-          name: newKey,
-          content: promptContent || '',
-          spice: {
-            iteration: key,
-          }
-      };
-    });
+  const result: Array<Partial<PromptType>> = [];
+
+  prompts.forEach((prompt) => {
+    const promptName = pickName(prompt);
+    const promptContent = pickContent(prompt);
+    const promptObject = typeof prompt === "object"
+      ? prompt
+      : { [promptName || LAMBDA]: promptContent };
+
+    for (let i = 0; i < replicateCount; i++) {
+      const newKey = `${promptName}_${i}`;
+      result.push({
+        ...promptObject,
+        name: newKey,
+        content: promptContent || '',
+        spice: {
+          iteration: i,
+        }
+      });
+    }
+  });
+
   return result;
 };
 
 // an array split by a supplied delemeter.
-// const performDistribute = (completion, distribute, context, state) => {
-//   let distributeDelimiter: number = 0;
-//   if (typeof distribute === "function") {
-//     distributeDelimiter = distribute(context, state);
-//   } else if (typeof distribute === "string") {
-//     distributeDelimiter = distribute;
-//   } else if (distribute === true) {
-//     distributeDelimiter = DEFAULT_DELIMITER;
-//   }
-//   return completion.split(distributeDelimiter);
-//   return Array(distributeCount)
-//     .fill(prompt)
-//     .map((prompt, key) => ({ [key]: prompt }));
-// };
+const performDistribute = (
+  completion: string,
+  distribute: string | boolean | ((context?: KVP, state?: KVP) => string),
+  context?: KVP,
+  state?: KVP,
+): Array<string> => {
+  let distributeDelimiter: string = DEFAULT_DELIMITER;
+  if (typeof distribute === "function") {
+    distributeDelimiter = distribute(context, state);
+  } else if (typeof distribute === "string") {
+    distributeDelimiter = distribute;
+  } else if (distribute === true) {
+    distributeDelimiter = DEFAULT_DELIMITER;
+  }
+  return completion.split(distributeDelimiter);
+};
 
-//
-// const performAggregate = (completions, aggregate, context, state) => {
-//   return completions.join(",");
-// };
+const performAggregate = (
+  completions: string[],
+  aggregate: string | boolean | ((context?: KVP, state?: KVP) => string),
+  context?: KVP,
+  state?: KVP,
+): string => {
+  let aggregateDelimiter: string = DEFAULT_DELIMITER;
+  if (typeof aggregate === "function") {
+    aggregateDelimiter = aggregate(context, state);
+  } else if (typeof aggregate === "string") {
+    aggregateDelimiter = aggregate;
+  } else if (aggregate === true) {
+    aggregateDelimiter = DEFAULT_DELIMITER;
+  }
+  return completions.join(aggregateDelimiter);
+};
 
 // Changes string into an array and then back into a sorted list as an array
 // Accumulator('colors: 1) blue, 2) orange, 3) red', { distribute, aggregate })
 // returns: blue, orange, red
 export const Accumulator = (
-  prompt: string | KVP | PromptType,
+  basePrompts: (string | KVP | PromptType)[],
   options: OptionsType,
-): ((string | KVP | PromptType)[] | Promise<(string | KVP | PromptType)[]>) => {
-  let replicateCount: number = 0;
-  let distributeCount: number = 0;
+): string | string[] | PromptType[] => {
 
-  let prompts: (PromptType)[];
-  let completions: string[];
-  let completion: string[] | string;
+  let prompts: (string | KVP | PromptType)[] = [...basePrompts];
+  let completion: string | string[] = options.completion || '';
+  let completions: string | string[];
 
-  const { replicate, aggregate, distribute, feedback, context, state } =
+  const { replicate, aggregate, distribute, context, state } =
     options;
 
   // valid combos:
@@ -126,24 +131,24 @@ export const Accumulator = (
   // distribute: true
 
   prompts = replicate
-    ? performReplicate(prompt, replicate, context, state) as PromptType[]
-    : [prompt as PromptType];
+    ? performReplicate(prompts, replicate, context, state) as PromptType[]
+    : prompts;
 
-  // const AccumulatorCybernetic = createDynamic({
-  //   name: "AccumulatorCybernetic",
-  //   context,
-  //   prompts,
-  // });
+  completions = distribute
+    ? performDistribute(completion, distribute, context, state)
+    : [completion as string];
 
-  // const result = await AccumulatorCybernetic.run(state);
-  // completions = result.state.AccumulatorCybernetic;
+  completion = aggregate
+    ? performAggregate(completions, aggregate, context, state)
+    : completions;
 
-  // completion = aggregate
-  //   ? performAggregate(completions, aggregate, context, state)
-  //   : completions;
+  if(completions[0] !== '') {
+    return completions as string[];
+  }
 
-  // completions =
-  //   distribute && performDistribute(prompt, distribute, context, state);
+  if(completion !== '' && completion[0] !== '') {
+    return completion as string;
+  }
 
-  return prompts;
+  return prompts as PromptType[];
 };

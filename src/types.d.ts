@@ -26,7 +26,9 @@ export type DynamicType = {
   ) => Promise<Record<string, any>>;
   prompts?:
     | (string | KVP | PromptType)[]
-    | ((input: string | KVP | PromptType) => PromptType)[];
+    | ((input: string | KVP | PromptType) => PromptType)[]
+    | Array<Record<string, string>> 
+    | (string | PromptType | KVP)[]
   context?: any;
   before?: Hook;
   after?: Hook;

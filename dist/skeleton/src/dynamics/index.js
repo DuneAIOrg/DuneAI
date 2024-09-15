@@ -62,7 +62,8 @@ const SayHelloWorld = () => __awaiter(void 0, void 0, void 0, function* () {
         context,
         model: "gpt-4o-mini",
         adapter: "OPENAI",
-        prompts: yield (0, Cybernetics_1.Accumulator)({ HelloWorld }, { replicate: COUNT }),
+        // @ts-ignore
+        prompts: (0, Cybernetics_1.Accumulator)([{ HelloWorld }], { replicate: COUNT }),
         before: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield PickLocale.run(state); }),
         after: (_a) => __awaiter(void 0, [_a], void 0, function* ({ state }) { return yield RespondToAll.run(state); }),
     });

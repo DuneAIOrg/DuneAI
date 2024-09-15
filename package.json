@@ -10,7 +10,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "run": "ts-node src/skeleton/src/index.ts",
+    "run": "DEFAULT_MODEL=gpt-4o-mini DEFAULT_ADAPTER=OPENAI ts-node src/skeleton/src/index.ts",
     "setup": "node duneai-setup.js"
   },
   "dependencies": {

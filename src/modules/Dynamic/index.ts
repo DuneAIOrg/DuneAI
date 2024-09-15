@@ -14,7 +14,7 @@ export const ADAPTER = process.env.DEFAULT_ADAPTER || "GPT4ALL";
 export const createDynamic = (
   params: Partial<DynamicType> | string,
   context?: NestedObject,
-  prompts: Partial<Dependencies> | Array<Record<string, string>> = {},
+  prompts: Partial<Dependencies> | Array<Record<string, string>> | (string | PromptType | KVP)[] = {},
   overrides: Partial<Dependencies> = {},
 ): DynamicType => {
   let dynamicParams: Partial<DynamicType>;
@@ -82,7 +82,7 @@ export const createDynamic = (
 const Dynamic = (
   params: DynamicType | string,
   context: NestedObject = {},
-  prompts: Array<Record<string, string>> | Partial<Dependencies> = {},
+  prompts: (KVP | string | PromptType)[] = [],
   overrides: Partial<Dependencies> = {},
 ) => createDynamic(params, context, prompts, overrides);
 
