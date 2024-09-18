@@ -10,7 +10,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "run": "ts-node src/skeleton/src/index.ts",
+    "run": "OPENAI_API_KEY=sk-proj-UfdUBJ1g4VEluKOMHrYMT3BlbkFJ7C5VezF3tdTr6MPvmy3V ts-node src/skeleton/src/index.ts",
     "setup": "node duneai-setup.js"
   },
   "dependencies": {

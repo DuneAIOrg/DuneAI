@@ -28,13 +28,6 @@ export const shuffle = (array: string[][]) => {
     .map(({ value }) => value);
 };
 
-// @ts-ignore
-export const interpolateIteration = function (content, params) {
-  const keys = Object.keys(params);
-  const values = Object.values(params);
-  return new Function(...keys, `return \`${content}\`;`)(...values);
-};
-
 export const attemptObjectification = (content: string) => {
   // check if the object can be objectified
 };

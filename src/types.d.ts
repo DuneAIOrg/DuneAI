@@ -39,7 +39,7 @@ export type IterationOptions = {
 };
 
 export interface NestedObject {
-  [key: string]: unknown | NestedObject;
+  [key: string]: string | number | boolean | NestedObject;
 }
 
 export interface AppState {
