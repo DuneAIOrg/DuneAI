@@ -1,4 +1,4 @@
-import Prompt, { importPrompts } from "./modules/Prompt";
+import { importPrompts } from "./modules/Prompt";
 import Dynamic, { createDynamic } from "./modules/Dynamic";
 import Iterator from "./modules/Iterator";
 
@@ -9,7 +9,6 @@ const CoT = COT;
 const ToT = TOT;
 
 export {
-  Prompt,
   Dynamic,
   Iterator,
   createDynamic,
@@ -21,7 +20,6 @@ export {
 };
 
 export default {
-  Prompt,
   Dynamic,
   Iterator,
   createDynamic,

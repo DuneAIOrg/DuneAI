@@ -37,7 +37,7 @@ export interface SpiceType {
   duration: number;
   tokensSent: number;
   tokensReceived: number;
-  tokensTransferred: number;
+  totalTokens: number;
   modelUsed: string;
   adapterUsed: string;
 }
@@ -48,7 +48,7 @@ export interface MetaType {
   duration: number;
   tokensSent: number;
   tokensReceived: number;
-  tokensTransferred: number;
+  totalTokens: number;
 }
 
 export interface DynamicState {
@@ -67,7 +67,7 @@ export interface PromptType {
   spice: SpiceType;
   options: KeyValuePair;
   run: (state: DynamicState) => 
-    Promise<string>;
+    Promise<PromptType>;
 }
 
 export interface DynamicType {

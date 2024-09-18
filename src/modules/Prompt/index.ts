@@ -1,4 +1,4 @@
-import { PromptType, PromptParamsType } from "../types";
+import { PromptType, PromptParamsType, DynamicState } from "../types";
 import { getSettings } from "../settings";
 import { 
   run, 
@@ -30,7 +30,7 @@ const createPrompt = async(
   return {
     ...getSettings(),
     ...newPrompt,
-    run: () => run(newPrompt as PromptType)
+    run: (state: DynamicState) => run(newPrompt as PromptType, state)
   } as PromptType;
 }
 

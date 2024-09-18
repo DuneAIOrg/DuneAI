@@ -14,7 +14,6 @@ const PickLocale = createDynamic("PickLocale", context, [
     name: "Continent",
     content: Continent,
     model: "gpt-4o-mini",
-    adapter: "OPENAI",
   },
   { Languages },
 ]);
