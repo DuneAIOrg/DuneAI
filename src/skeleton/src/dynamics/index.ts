@@ -1,6 +1,5 @@
 import * as path from "path";
 import { createDynamic, importPrompts, TOT } from "../../../";
-import { DynamicState } from "../../../modules/types";
 
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
 const { Continent, Languages, HelloWorld, Respond } = importPrompts(fullPath);

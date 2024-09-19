@@ -92,6 +92,6 @@ export interface DynamicType {
   before?: LifecycleHookType;
   after?: LifecycleHookType;
   exportState: () => DynamicState;
-  run: (state: Partial<DynamicState>) => 
+  run: (state: DynamicState['state']) => 
     Promise<Partial<DynamicState>>;
 }
