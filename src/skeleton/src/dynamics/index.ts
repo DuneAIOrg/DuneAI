@@ -1,6 +1,6 @@
 import * as path from "path";
-import { createDynamic, importPrompts, Iterator, TOT } from "../../../";
-import { DynamicType } from "../../../types";
+import { createDynamic, importPrompts, TOT } from "../../../";
+import { DynamicState } from "../../../modules/types";
 
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
 const { Continent, Languages, HelloWorld, Respond } = importPrompts(fullPath);
@@ -19,13 +19,11 @@ const PickLocale = createDynamic("PickLocale", context, [
 ]);
 const RespondToAll = createDynamic("RespondToAll", context, [{ Respond }]);
 
-export const SayHelloWorld: DynamicType = createDynamic({
+export const SayHelloWorld = createDynamic({
   name: "SayHelloWorld",
   kind: TOT,
   context,
-  model: "gpt-4o-mini",
-  adapter: "OPENAI",
-  prompts: Iterator([{ HelloWorld }], { iterations: COUNT }),
-  before: async ({ state }) => await PickLocale.run(state),
-  after: async ({ state }) => await RespondToAll.run(state),
+  prompts: [{ HelloWorld }],
+  before: async (state) => await PickLocale.run(state),
+  after: async (state) => await RespondToAll.run(state),
 });

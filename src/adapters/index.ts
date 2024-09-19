@@ -6,6 +6,9 @@ export const ADAPTERS = {
   GPT4ALL: gpt4all,
   OPENAI: openai,
   SDWEBUI: sdwebui,
+  gpt4all: gpt4all,
+  openai: openai,
+  sdwebui: sdwebui,
 };
 
 export const MODELS = {
@@ -35,14 +38,13 @@ export const MODELS = {
 // Unified ask method that delegates to the correct adapter based on the modelKey
 export async function ask(
   prompt: string | Record<string, any>,
-  modelKey: keyof typeof MODELS | string,
+  adapterName: string,
+  modelName: string,
   options?: any,
 ) {
   // @ts-ignore
-  const adapterKey =
-    // @ts-ignore
-    MODELS[modelKey]?.adapter || options?.adapter || ADAPTERS["GPT4ALL"];
+  const adapter = ADAPTERS[adapterName];
   // @ts-ignore
-  const adapter = ADAPTERS[adapterKey];
-  return adapter.ask(prompt, { model: modelKey, ...options });
+  const model = MODELS[modelName];
+  return openai.ask(prompt, { model, ...options });
 }

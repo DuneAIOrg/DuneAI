@@ -28,6 +28,17 @@ export interface NestedObjectType {
     NestedObjectType;
 }
 
+export interface DynamicOptionsParamType {
+  kind: string;
+  prompts: PromptParamsType[];
+  context?: NestedObjectType;
+  overrides?: Partial<PromptParamsType>;
+  name?: string;
+  meta?: MetaType;
+  before?: LifecycleHookType;
+  after?: LifecycleHookType;
+}
+
 export interface SpiceType {
   seed: number;
   currentTime: Date;
@@ -64,6 +75,7 @@ export interface PromptType {
   model: string;
   adapter: string;
   content: string;
+  completion?: string;
   spice: SpiceType;
   options: KeyValuePair;
   run: (state: DynamicState) => 
@@ -76,9 +88,10 @@ export interface DynamicType {
   meta: MetaType;
   context: NestedObjectType;
   prompts: PromptParamsType[];
-  before: LifecycleHookType;
-  after: LifecycleHookType;
+  overrides?: Partial<PromptParamsType>;
+  before?: LifecycleHookType;
+  after?: LifecycleHookType;
   exportState: () => DynamicState;
-  run: (state: DynamicState, context: NestedObjectType) => 
-    Promise<NestedObjectType>;
+  run: (state: Partial<DynamicState>) => 
+    Promise<Partial<DynamicState>>;
 }

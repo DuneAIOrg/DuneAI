@@ -1,8 +1,8 @@
 import { createStore } from "zustand/vanilla";
 import { createPersistMiddleware } from "../middleware";
-import type { AppState, NestedObject } from "../types";
+import type { DynamicState, NestedObjectType } from "../modules/types";
 
-export const useStore = createStore<AppState>(
+export const useStore = createStore<DynamicState>(
   createPersistMiddleware("state.json")((set: Function) => ({
     state: {},
     context: {},
@@ -16,11 +16,11 @@ export const useStore = createStore<AppState>(
           },
         },
       })),
-    setContext: (context: NestedObject) =>
+    setContext: (context: NestedObjectType) =>
       set(
         (store: {
-          state: AppState["state"];
-          context: AppState["context"];
+          state: DynamicState["state"];
+          context: DynamicState["context"];
         }) => ({
           context: {
             ...store.context,
@@ -28,8 +28,8 @@ export const useStore = createStore<AppState>(
           },
         }),
       ),
-    initializeState: (initialState: Record<string, any>) =>
-      set((store: AppState) => ({
+    initializeState: (initialState: NestedObjectType) =>
+      set((store: DynamicState) => ({
         state: {
           ...store.state,
           ...initialState,

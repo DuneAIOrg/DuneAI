@@ -5,7 +5,7 @@ Pick a random continent. Use this as a seed: {{ seed }}, tell me the seed value 
 Write a list of {{ C.count }} languages from the selected continent: {{ PickLocale.Continent }}. Only list the selected languages.
 
 # HelloWorld
-Say "hello world" in language number ${iteration}. Only provide the translation, no introductions or delimitations:
+Say "hello world". Only provide the translation, no introductions or delimitations:
 {{ PickLocale.Languages }}
 
 # Respond

@@ -9,6 +9,7 @@ export const openai = new OpenAI({
 const getCompletion = async (content: string, options: {}) => {
   const params = {
     messages: [{ role: "user", content }],
+    model: 'gpt-4o-mini',
     ...options,
   };
   // @ts-ignore
@@ -16,7 +17,7 @@ const getCompletion = async (content: string, options: {}) => {
   // @ts-ignore
   const chatCompletion: OpenAI.Chat.ChatCompletion =
     await openai.chat.completions.create(
-      openaiParams as OpenAI.Chat.ChatCompletionCreateParams,
+      {...openaiParams, model: 'gpt-4o-mini'} as OpenAI.Chat.ChatCompletionCreateParams,
     );
   return chatCompletion.choices[0].message?.content;
 };

@@ -1,18 +1,10 @@
 {
   "state": {
-    "seed": 523452345235,
-    "PickLocale": {
-      "Continent": "The seed value I used is 523452345235. A random continent that can be associated with this seed is South America.",
-      "Languages": "Based on the seed value 52345.23.45235, I randomly selected South America as the continent. Here are 4 languages spoken in South America:\n\n1. Spanish\n2. Portuguese\n3. Quechua\n4. Guarani"
+    "state": {
+      "seed": 523452345235
     },
     "SayHelloWorld": {
-      "HelloWorld_iteration_1": "Hola mundo",
-      "HelloWorld_iteration_2": "Olá mundo!",
-      "HelloWorld_iteration_3": "Kamachaypi!",
-      "HelloWorld_iteration_4": "Hola mundo!"
-    },
-    "RespondToAll": {
-      "Respond": "Here are the hellos in each language:\n\n1. Spanish: Hola\n2. Portuguese: Olá\n3. Quechua: Q'ara (note: Quechua has many dialects, and \"Q'ara\" is one way to say \"hello\" in some dialects)\n4. Guarani: Ñe'ẽ"
+      "HelloWorld": "Hola mundo"
     }
   },
   "context": {

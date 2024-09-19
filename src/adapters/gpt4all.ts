@@ -1,11 +1,10 @@
 import * as gpt from "gpt4all";
 import { throttledOperation } from "../utils/throttling";
 import { MODELS } from "./";
-import type { AIModel } from "../types";
 
 // Optional interface for completion options
 interface CompletionOptions {
-  model: AIModel;
+  model: string;
   verbose?: boolean;
   device?: string;
 }
