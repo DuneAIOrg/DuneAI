@@ -1,18 +1,8 @@
 {
   "state": {
-    "seed": 523452345235,
-    "PickLocale": {
-      "Continent": "The random continent I've chosen is Asia. The seed value I used is 523452345235.",
-      "Languages": "1. Mandarin Chinese\n2. Hindi\n3. Arabic\n4. Japanese"
-    },
-    "SayHelloWorld": {
-      "HelloWorld": "1. 你好，世界\n2. नमस्ते दुनिया\n3. مرحبا بالعالم\n4. こんにちは世界"
-    },
-    "RespondToAll": {
-      "Respond": "1. 你好\n2. नमस्ते\n3. مرحبا\n4. こんにちは"
+    "SelectorCybernetic": {
+      "λ": "f"
     }
   },
-  "context": {
-    "count": 4
-  }
+  "context": {}
 }

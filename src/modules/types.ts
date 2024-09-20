@@ -39,6 +39,21 @@ export interface DynamicOptionsParamType {
   after?: LifecycleHookType;
 }
 
+export type SelectorOptionsType = {
+  greedy?: boolean;
+  state?: DynamicState['state'];
+}
+
+export type SelectorParamsType = {
+  completions: 
+    string[] | 
+    ((state: DynamicState['state']) => string[]);
+  criteria?: 
+    string |
+    ((state: DynamicState['state']) => string);
+  options?: SelectorOptionsType;
+}
+
 export interface SpiceType {
   seed: number;
   currentTime: Date;
@@ -94,4 +109,11 @@ export interface DynamicType {
   exportState: () => DynamicState;
   run: (state: DynamicState['state']) => 
     Promise<Partial<DynamicState>>;
+}
+
+export interface SelectorType {
+  (params: SelectorParamsType): Promise<
+    [number, string][] |
+    [number, string]
+  >;
 }
