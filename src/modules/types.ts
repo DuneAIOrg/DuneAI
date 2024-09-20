@@ -55,17 +55,17 @@ export type SelectorParamsType = {
 }
 
 export interface SpiceType {
-  seed: number;
-  currentTime: Date;
-  startedAt: Date;
+  seed?: number;
+  currentTime?: Date;
+  startedAt?: Date;
   iteration?: number;
-  finishedAt: Date;
-  duration: number;
-  tokensSent: number;
-  tokensReceived: number;
-  totalTokens: number;
-  modelUsed: string;
-  adapterUsed: string;
+  finishedAt?: Date;
+  duration?: number;
+  tokensSent?: number;
+  tokensReceived?: number;
+  totalTokens?: number;
+  modelUsed?: string;
+  adapterUsed?: string;
 }
 
 export interface MetaType {

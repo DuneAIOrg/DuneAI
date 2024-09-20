@@ -80,8 +80,8 @@ const prefixSpice = (prompt: PromptType): PromptType => {
 const suffixSpice = (prompt: PromptType, completion: string): PromptType => {
   const finishedAt = new Date();
   const duration = 
-    finishedAt.getTime() - 
-    prompt.spice.startedAt.getTime();
+    (finishedAt.getTime() - 
+    (prompt.spice?.startedAt?.getTime() || 0));
   const { tokenCount: tokensSent } =
     countTokens(prompt.content, prompt.model as string);
   const { tokenCount: tokensReceived } =

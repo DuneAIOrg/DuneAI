@@ -1,8 +1,8 @@
-import { PromptType, KeyValuePair } from "../../types";
+import { PromptType, KeyValuePair, DynamicState } from "../../types";
 import { createPrompt } from "../../Prompt";
 import { createDynamic } from "../../Dynamic";
 
-import { LAMBDA } from "../index";
+import { LAMBDA } from "../../constants";
 
 const DEFAULT_DELIMITER = ",";
 
@@ -17,18 +17,19 @@ interface OptionsType {
 }
 
 const pickName = (prompt: KeyValuePair | PromptType | string): string | false =>
-  typeof prompt === "object" && "name" in prompt
-    ? prompt?.name || false
+  typeof prompt === "object" && "name" in prompt && typeof prompt.name === "string"
+    ? prompt.name
     : typeof prompt === "object"
       ? Object.entries(prompt)?.[0]?.[0] || false
       : LAMBDA;
 
 const pickContent = (prompt: KeyValuePair | PromptType | string): string | false =>
-  // @ts-ignore
-  typeof prompt === "object" && "content" in prompt
-    ? prompt?.content || false
+  typeof prompt === "object" && "content" in prompt && typeof prompt.content === "string"
+    ? prompt.content
     : typeof prompt === "object"
-      ? Object.entries(prompt)?.[0]?.[1] || false
+      ? typeof Object.entries(prompt)?.[0]?.[1] === "string" 
+        ? Object.entries(prompt)[0][1] as string
+        : false
       : false;
 
 const performReplicate = (
@@ -108,10 +109,13 @@ const performAggregate = (
 // Changes string into an array and then back into a sorted list as an array
 // Accumulator('colors: 1) blue, 2) orange, 3) red', { distribute, aggregate })
 // returns: blue, orange, red
-export const Accumulator = (
+export const Accumulator = async({
+  basePrompts,
+  options
+}: {
   basePrompts: (string | KeyValuePair | PromptType)[],
-  options: OptionsType,
-): string | string[] | PromptType[] => {
+  options: OptionsType
+}): Promise<string | string[] | PromptType[]> => {
 
   let prompts: (string | KeyValuePair | PromptType)[] = [...basePrompts];
   let completion: string | string[] = options.completion || '';
