@@ -1,6 +1,6 @@
-// import { Accumulator } from "./Accumulator";
+import { Accumulator } from "./Accumulator";
 import { Selector } from "./Selector";
-// import { Inverter } from "./Inverter";
+import { Inverter } from "./Inverter";
 // import { ThinkingMachine } from "./ThinkingMachine";
 
 const LAMBDA = "λ";
@@ -21,4 +21,4 @@ const LAMBDA = "λ";
 // });
 
 // Export all cybernetics for use elsewhere in the application
-export { Selector, LAMBDA }; //, Inverter, ThinkingMachine };
+export { Selector, Accumulator, Inverter, LAMBDA }; //, Inverter, ThinkingMachine };

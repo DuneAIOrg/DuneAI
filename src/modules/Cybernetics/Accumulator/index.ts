@@ -11,9 +11,9 @@ interface OptionsType {
   context?: KeyValuePair;
   feedback?: string;
   completion?: string;
-  aggregate?: string | ((context?: KeyValuePair, state?: KeyValuePair) => string);
+  aggregate?: string | boolean | ((context?: KeyValuePair, state?: KeyValuePair) => string);
   replicate?: number | ((context?: KeyValuePair, state?: KeyValuePair) => number);
-  distribute?: string | ((context?: KeyValuePair, state?: KeyValuePair) => string);
+  distribute?: string | boolean | ((context?: KeyValuePair, state?: KeyValuePair) => string);
 }
 
 const pickName = (prompt: KeyValuePair | PromptType | string): string | false =>
@@ -86,7 +86,7 @@ const performDistribute = (
   } else if (distribute === true) {
     distributeDelimiter = DEFAULT_DELIMITER;
   }
-  return completion.split(distributeDelimiter);
+  return completion.split(distributeDelimiter).map((item) => item.trim());
 };
 
 const performAggregate = (
