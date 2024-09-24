@@ -40,10 +40,11 @@ export const run = async (
 const runChainOfThought = async (dynamic: DynamicType) => {
   for (const prompt of dynamic.prompts || []) {
     const { state, context } = useStore.getState();
-    const generation = await (await createPrompt(prompt)).run({
+    const promptObject = await createPrompt(prompt)
+    const generation = await promptObject.run({
       ...state,
       context,
-    } as DynamicState);
+    } as DynamicState, dynamic.log);
     useStore.getState().setState(
       dynamic.name, 
       generation.name, 
@@ -55,10 +56,11 @@ const runChainOfThought = async (dynamic: DynamicType) => {
 const runTreeOfThought = async (dynamic: DynamicType) => {
   await Promise.all(dynamic.prompts.map(async (prompt) => {
     const { state, context } = useStore.getState();
-    const generation = await (await createPrompt(prompt)).run({
+    const promptObject = await createPrompt(prompt)
+    const generation = await promptObject.run({
       ...state,
       context: context as NestedObjectType,
-    } as DynamicState);
+    } as DynamicState, dynamic.log);
     useStore.getState().setState(
       dynamic.name, 
       generation.name, 

@@ -1,0 +1,37 @@
+# Structure
+
+Create a structure for the README.md file. Only include a list of section titles as a comma separated list. Only include the sections. No notes, structure, title, API Reference, Feedback and Contributions, Acknowledgments, or introduction. It should focus on the actual project parts like the dynamics, prompts, and various cybernetics.
+
+Here is an introduction to the project:
+{{ context.introduction }}
+
+File contents from this project:
+{{ context.extractedInfo }}
+
+# Section
+
+You are writing a README.md file. This is the structure of the file:
+{{ context.structure.Structure.Structure }}
+
+File contents from this project:
+{{ context.extractedInfo }}
+
+Here is the introduction:
+{{ context.introduction }}
+
+Here is what has been written so far:
+{{ context.allSections }}
+
+Assume other sections will cover their own topics, try not to duplicate content.
+
+Write this section: {{ context.currentSection }}
+
+# Edit
+Edit the final copy of the readme.
+
+Here is the rough draft of the readme:
+{{ context.allSections }}
+
+Write the best version of this. Do not repeate content and make the entire thing consistent and clear.
+
+Copy the introduction verbatim.

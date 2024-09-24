@@ -22,6 +22,7 @@ export const createDynamic = (
       kind: COT,
       context: context as NestedObjectType,
       prompts: prompts as Array<PromptParamsType>,
+      log: false,
     } as DynamicType;
   } else if (typeof options === "object") {
     newDynamic = {
@@ -29,6 +30,7 @@ export const createDynamic = (
       kind: options.kind === TOT ? TOT : COT,
       context: options.context as NestedObjectType,
       prompts: options.prompts as Array<PromptParamsType>,
+      log: options.log ?? false,
       before: options.before,
       after: options.after,
     } as DynamicType;

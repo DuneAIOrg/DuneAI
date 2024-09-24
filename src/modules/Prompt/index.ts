@@ -30,7 +30,7 @@ const createPrompt = async(
   return {
     ...getSettings(),
     ...newPrompt,
-    run: (state: DynamicState) => run(newPrompt as PromptType, state)
+    run: (state: DynamicState, log: boolean = false) => run(newPrompt as PromptType, state, log)
   } as PromptType;
 }
 

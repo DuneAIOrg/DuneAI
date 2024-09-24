@@ -6,20 +6,32 @@ import { PromptType, DynamicState } from "../types";
 import { LAMBDA } from "../constants";
 import { ask } from "../../adapters";
 import { countTokens } from "../../utils";
+import Logger from "../../middleware/logger";
 
-export const run = async(prompt: PromptType, state: DynamicState) => {
+export const run = async(prompt: PromptType, state: DynamicState, log: boolean) => {
   let runningPrompt: PromptType = prompt;
   runningPrompt = prefixSpice(runningPrompt);
   runningPrompt = interpolateSpice(runningPrompt);
   runningPrompt = interpolateState(runningPrompt, state);
 
-  const completion = await performCompletion(runningPrompt);
+  if (log) logPrompt(prompt, 'sending', runningPrompt.content as string);
+  const completion = await performCompletion(runningPrompt) || '';
+  if (log) logPrompt(prompt, 'complete', completion);
 
   return Promise.resolve({
     ...suffixSpice(runningPrompt, completion),
     ...runningPrompt,
     completion,
   });
+}
+
+const logPrompt = (prompt: PromptType, status: 'sending' | 'complete', content: string) => {
+  const maxLength = 0;
+  const contentWithoutNewlines = content.replace(/\n/g, '');
+  const preview = contentWithoutNewlines.length > maxLength ? contentWithoutNewlines.substring(0, maxLength) + '...' : contentWithoutNewlines;
+  const { tokenCount} = countTokens(content, 'gpt-4o-mini');
+  const message = `${prompt.name} - ${status.toUpperCase()}: ${preview} (Total tokens: ${tokenCount.toLocaleString()})`;
+  Logger.info(message);
 }
 
 export const importPrompts = (

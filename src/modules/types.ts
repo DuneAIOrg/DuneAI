@@ -8,7 +8,7 @@ export type PromptParamsType =
   (() => PromptType | SimplePrompt | KeyValuePrompt) |
   (() => Promise<PromptType | SimplePrompt | KeyValuePrompt>);
 
-type LifecycleHookType = (state: Partial<DynamicState>) => 
+export type LifecycleHookType = (state: Partial<DynamicState>) => 
   void          | 
   Promise<void> | 
   Promise<Partial<DynamicState>>;
@@ -35,6 +35,7 @@ export interface DynamicOptionsParamType {
   overrides?: Partial<PromptParamsType>;
   name?: string;
   meta?: MetaType;
+  log?: boolean;
   before?: LifecycleHookType;
   after?: LifecycleHookType;
 }
@@ -93,13 +94,14 @@ export interface PromptType {
   completion?: string;
   spice: SpiceType;
   options: KeyValuePair;
-  run: (state: DynamicState) => 
+  run: (state: DynamicState, log: boolean) => 
     Promise<PromptType>;
 }
 
 export interface DynamicType {
   name: string;
   kind: string;
+  log: boolean;
   meta: MetaType;
   context: NestedObjectType;
   prompts: PromptParamsType[];
