@@ -11,7 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 const duneai_1 = require("duneai");
-const { HelloWorld } = (0, duneai_1.importPrompts)("./prompts.prompt");
+// console.log({ duneai});
+const { HelloWorld } = (0, duneai_1.importPrompts)("./src/skeleton/src/prompts.prompt");
 const runPrimeDynamic = () => __awaiter(void 0, void 0, void 0, function* () {
     const PrimeDynamic = (0, duneai_1.createDynamic)("PrimeDynamic", {}, [{ HelloWorld }]);
     const resultingState = yield PrimeDynamic.run();

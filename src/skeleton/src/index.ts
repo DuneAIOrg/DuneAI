@@ -1,7 +1,9 @@
 // @ts-ignore
-import { createDynamic, importPrompts } from "duneai";
+import { importPrompts, createDynamic } from "duneai";
 
-const { HelloWorld } = importPrompts("./prompts.prompt");
+// console.log({ duneai});
+
+const { HelloWorld } = importPrompts("./src/skeleton/src/prompts.prompt");
 
 const runPrimeDynamic = async () => {
   const PrimeDynamic = createDynamic("PrimeDynamic", {} , [{ HelloWorld }]);
