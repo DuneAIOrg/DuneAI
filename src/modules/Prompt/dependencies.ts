@@ -5,6 +5,7 @@ import Mustache from "mustache";
 import { PromptType, DynamicState } from "../types";
 import { LAMBDA } from "../constants";
 import { ask } from "../../adapter";
+import { getSettings } from "../settings";
 import { countTokens } from "../../utils";
 import Logger from "../../middleware/logger";
 import { KeyValuePair } from "../types";
@@ -17,7 +18,7 @@ export const run = async(prompt: PromptType, state: DynamicState, log: boolean) 
 
   if (log) logPrompt(prompt, 'sending', runningPrompt.content as string);
   const completion = await performCompletion(runningPrompt) as { content: string, meta: any };
-  if (log) logPrompt(prompt, 'complete', JSON.stringify(completion));
+  if (log) logPrompt(prompt, 'received', completion.content as string);
 
   return Promise.resolve({
     // @ts-ignore
@@ -27,12 +28,17 @@ export const run = async(prompt: PromptType, state: DynamicState, log: boolean) 
   });
 }
 
-const logPrompt = (prompt: PromptType, status: 'sending' | 'complete', content: string) => {
-  const maxLength = 0;
+const logPrompt = (prompt: PromptType, status: 'sending' | 'received', content: string) => {
+  const maxLength = parseInt(getSettings().maxLogLength as string, 10);
   const contentWithoutNewlines = content.replace(/\n/g, '');
-  const preview = contentWithoutNewlines.length > maxLength ? contentWithoutNewlines.substring(0, maxLength) + '...' : contentWithoutNewlines;
+  const preview = contentWithoutNewlines.length > maxLength 
+    ? contentWithoutNewlines.substring(0, maxLength) + '...' 
+    : contentWithoutNewlines;
   const { tokenCount} = countTokens(content, 'gpt-4o-mini');
-  const message = `${prompt.name} - ${status.toUpperCase()}: ${preview} (Total tokens: ${tokenCount.toLocaleString()})`;
+  const prefix = `${status.toUpperCase()} (${tokenCount.toLocaleString()})`;
+  const paddedPrefix = prefix.padEnd(15, ' ');
+  const paddedName = prompt.name.padEnd(25, ' ');
+  const message = `${paddedPrefix} | ${paddedName} | ${preview}`;
   Logger.info(message);
 }
 
@@ -77,12 +83,10 @@ const interpolateSpice = (prompt: PromptType): PromptType => {
 const prefixSpice = (prompt: PromptType): PromptType => {
   const startedAt = new Date();
   const currentTime = new Date();
-  const seed = Math.random();
+  const seed = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
   return {
     ...prompt,
     spice: {
-      // possible iteration info 
-      // is passed with the prompt
       ...prompt.spice,
       currentTime,
       startedAt,
@@ -107,6 +111,7 @@ const suffixSpice = (prompt: PromptType, completion: string, raw: KeyValuePair):
     ...prompt,
     spice: {
       ...prompt.spice,
+      sentPrompt: prompt.content,
       finishedAt,
       duration,
       modelUsed: prompt.model,
@@ -124,7 +129,9 @@ const interpolateState = (prompt: PromptType, state: DynamicState): PromptType =
     ...state,
     ...{
       C: state.context,
+      c: state.context,
       Context: state.context,
+      context: state.context,
     },
   });
   return {

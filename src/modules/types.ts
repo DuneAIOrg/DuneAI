@@ -56,6 +56,7 @@ export type SelectorParamsType = {
 }
 
 export interface SpiceType {
+  sentPrompt?: string;
   seed?: number;
   currentTime?: Date;
   startedAt?: Date;

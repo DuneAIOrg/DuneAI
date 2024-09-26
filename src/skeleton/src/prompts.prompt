@@ -1,3 +1,7 @@
 # HelloWorld
 
-Say hello to the world!
+Say hello to the world! And include a neat fact about the current time.
+
+current time: ${currentTime}
+
+seed: ${seed}

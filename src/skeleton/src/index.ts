@@ -15,14 +15,14 @@ const runPrimeDynamic = async () => {
       content,
       model
     })),
-    log: false,
+    log: true,
   });
 
   // Run the dynamic to run the examples.
   const PrimeDynamicState = await PrimeDynamic.run();
 
   // Log the resulting state.
-  console.log({ PrimeDynamicState});
+  // console.log({ PrimeDynamicState});
 };
 
 runPrimeDynamic();
