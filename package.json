@@ -12,7 +12,7 @@
     "dev": "ts-node src/index.ts",
     "generate-readme": "ts-node src/scripts/GenerateReadme/index.ts",
     "run": "ts-node src/skeleton/src/index.ts",
-    "setup": "node duneai-setup.js"
+    "setup": "node src/scripts/setup.js"
   },
   "dependencies": {
     "@types/fs-extra": "^11.0.4",
