@@ -4,9 +4,10 @@ import Mustache from "mustache";
 
 import { PromptType, DynamicState } from "../types";
 import { LAMBDA } from "../constants";
-import { ask } from "../../adapters";
+import { ask } from "../../adapter";
 import { countTokens } from "../../utils";
 import Logger from "../../middleware/logger";
+import { KeyValuePair } from "../types";
 
 export const run = async(prompt: PromptType, state: DynamicState, log: boolean) => {
   let runningPrompt: PromptType = prompt;
@@ -15,13 +16,14 @@ export const run = async(prompt: PromptType, state: DynamicState, log: boolean) 
   runningPrompt = interpolateState(runningPrompt, state);
 
   if (log) logPrompt(prompt, 'sending', runningPrompt.content as string);
-  const completion = await performCompletion(runningPrompt) || '';
-  if (log) logPrompt(prompt, 'complete', completion);
+  const completion = await performCompletion(runningPrompt) as { content: string, meta: any };
+  if (log) logPrompt(prompt, 'complete', JSON.stringify(completion));
 
   return Promise.resolve({
-    ...suffixSpice(runningPrompt, completion),
+    // @ts-ignore
+    ...suffixSpice(runningPrompt, completion.content || '', completion.raw || {}),
     ...runningPrompt,
-    completion,
+    completion: completion.content,
   });
 }
 
@@ -89,7 +91,7 @@ const prefixSpice = (prompt: PromptType): PromptType => {
   };
 }
 
-const suffixSpice = (prompt: PromptType, completion: string): PromptType => {
+const suffixSpice = (prompt: PromptType, completion: string, raw: KeyValuePair): PromptType => {
   const finishedAt = new Date();
   const duration = 
     (finishedAt.getTime() - 
@@ -112,6 +114,7 @@ const suffixSpice = (prompt: PromptType, completion: string): PromptType => {
       tokensSent,
       tokensReceived,
       totalTokens,
+      raw,
     },
   };
 }
@@ -131,7 +134,7 @@ const interpolateState = (prompt: PromptType, state: DynamicState): PromptType =
 }
 
 const performCompletion = async(prompt: PromptType) => {
-  return await ask(prompt.content, prompt.model, prompt.adapter) as string;
+  return await ask(prompt.content, prompt.adapter, prompt.model);
 }
 
 const importPrompt = (filePath: string): string => {

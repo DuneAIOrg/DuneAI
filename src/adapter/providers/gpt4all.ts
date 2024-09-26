@@ -1,6 +1,6 @@
 import * as gpt from "gpt4all";
 import { throttledOperation } from "../utils/throttling";
-import { MODELS } from "./";
+import { MODELS } from ".";
 
 // Optional interface for completion options
 interface CompletionOptions {

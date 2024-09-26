@@ -1,6 +1,6 @@
 import { createStore } from "zustand/vanilla";
-import { createPersistMiddleware } from "../middleware";
-import type { DynamicState, NestedObjectType } from "../modules/types";
+import { createPersistMiddleware } from "../../middleware";
+import type { DynamicState, NestedObjectType } from "../types";
 
 export const useStore = createStore<DynamicState>(
   createPersistMiddleware("state.json")((set: Function) => ({

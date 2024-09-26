@@ -67,6 +67,7 @@ export interface SpiceType {
   totalTokens?: number;
   modelUsed?: string;
   adapterUsed?: string;
+  raw?: KeyValuePair;
 }
 
 export interface MetaType {

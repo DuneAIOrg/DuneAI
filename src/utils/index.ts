@@ -28,15 +28,6 @@ export const shuffle = (array: string[][]) => {
     .map(({ value }) => value);
 };
 
-export const attemptObjectification = (content: string) => {
-  // check if the object can be objectified
-};
-
-export const objectify = (content: string) => {
-  // check if the content string is a valid json object,
-  // if so, return it as a js object
-};
-
 export const countTokens = (
   content: string,
   model: string,

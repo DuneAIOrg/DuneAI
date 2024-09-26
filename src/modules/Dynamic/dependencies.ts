@@ -1,7 +1,7 @@
 import { DynamicType, DynamicState, NestedObjectType } from "../types";
 import { createPrompt } from "../Prompt";
 import { COT } from "../constants";
-import { useStore } from "../../store";
+import { useStore } from "../store";
 
 export const run = async (
   initialState: Record<string, any>,

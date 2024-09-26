@@ -1,8 +1,31 @@
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
 
-import { StructureDynamic, SectionDynamic, EditDynamic } from './orchistration';
+import { createDynamic, importPrompts, COT } from "../../..";
+
+const fullPath = path.resolve(__dirname, "./prompts.prompt");
+const { Structure, Section, Edit } = importPrompts(fullPath);
+
+export const StructureDynamic = (context: any) => createDynamic({
+  name: 'Structure',
+  kind: COT,
+  context,
+  prompts: [{ Structure }]
+});
+
+export const SectionDynamic = (context: any) => createDynamic({
+  name: 'SectionDynamic',
+  kind: COT,
+  context,
+  prompts: [{ [context.currentSection.trim()]: Section }]
+});
+
+export const EditDynamic = (context: any) => createDynamic({
+  name: 'EditDynamic',
+  kind: COT,
+  context,
+  prompts: [{ Edit }]
+});
 
 const introduction = `
 DuneAI: The World's First Open Source Cybernetic Orchestration Framework
