@@ -82,8 +82,18 @@ export interface MetaType {
 export interface DynamicState {
   state: Record<string, any>;
   context: NestedObjectType;
-  setState: (dynamicName: string, promptName: string, value: any) => void;
-  setContext: (dynamicName: string, promptName: string, value: any) => void;
+  setState: (
+    dynamicName: string, 
+    promptName: string, 
+    value: string, 
+    spice: SpiceType | boolean
+  ) => void;
+  setContext: (
+    dynamicName: string, 
+    promptName: string, 
+    value: any, 
+    spice: SpiceType | boolean
+  ) => void;
   initializeState: (initialState: NestedObjectType) => void;
 }
 

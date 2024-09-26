@@ -1,21 +1,36 @@
 import { createStore } from "zustand/vanilla";
 import { createPersistMiddleware } from "../middleware";
-import type { DynamicState, NestedObjectType } from "../modules/types";
+import type { DynamicState, NestedObjectType, SpiceType } from "../modules/types";
 
 export const useStore = createStore<DynamicState>(
   createPersistMiddleware("state.json")((set: Function) => ({
     state: {},
     context: {},
-    setState: (dynamicName: string, key: string, value: any) =>
-      set((store: { state: Record<string, any> }) => ({
-        state: {
+    setState: (dynamicName: string, key: string, value: any, spice?: SpiceType) =>
+      set((store: { state: Record<string, any>; shadowState?: Record<string, any> }) => {
+        const newState = {
           ...store.state,
           [dynamicName]: {
             ...(store.state[dynamicName] || {}),
             [key]: value,
           },
-        },
-      })),
+        };
+
+        if (spice) {
+          return {
+            state: newState,
+            shadowState: {
+              ...store.shadowState,
+              [dynamicName]: {
+                ...(store.shadowState?.[dynamicName] || {}),
+                [key]: { value, spice },
+              },
+            },
+          };
+        }
+
+        return { state: newState };
+      }),
     setContext: (context: NestedObjectType) =>
       set(
         (store: {

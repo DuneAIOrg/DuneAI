@@ -48,7 +48,8 @@ const runChainOfThought = async (dynamic: DynamicType) => {
     useStore.getState().setState(
       dynamic.name, 
       generation.name, 
-      generation.completion
+      generation.completion as string,
+      dynamic.log ?? generation.spice
     );
   }
 }
@@ -64,7 +65,8 @@ const runTreeOfThought = async (dynamic: DynamicType) => {
     useStore.getState().setState(
       dynamic.name, 
       generation.name, 
-      generation.completion
+      generation.completion as string,
+      dynamic.log ?? generation.spice
     );
   }));
 }

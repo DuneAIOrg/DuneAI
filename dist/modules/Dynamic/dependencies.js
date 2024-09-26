@@ -34,18 +34,20 @@ const run = (initialState, dynamic) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.run = run;
 const runChainOfThought = (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     for (const prompt of dynamic.prompts || []) {
         const { state, context } = store_1.useStore.getState();
         const promptObject = yield (0, Prompt_1.createPrompt)(prompt);
         const generation = yield promptObject.run(Object.assign(Object.assign({}, state), { context }), dynamic.log);
-        store_1.useStore.getState().setState(dynamic.name, generation.name, generation.completion);
+        store_1.useStore.getState().setState(dynamic.name, generation.name, generation.completion, (_a = dynamic.log) !== null && _a !== void 0 ? _a : generation.spice);
     }
 });
 const runTreeOfThought = (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
     yield Promise.all(dynamic.prompts.map((prompt) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         const { state, context } = store_1.useStore.getState();
         const promptObject = yield (0, Prompt_1.createPrompt)(prompt);
         const generation = yield promptObject.run(Object.assign(Object.assign({}, state), { context: context }), dynamic.log);
-        store_1.useStore.getState().setState(dynamic.name, generation.name, generation.completion);
+        store_1.useStore.getState().setState(dynamic.name, generation.name, generation.completion, (_a = dynamic.log) !== null && _a !== void 0 ? _a : generation.spice);
     })));
 });

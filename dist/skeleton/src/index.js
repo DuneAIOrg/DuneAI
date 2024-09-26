@@ -11,11 +11,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 const duneai_1 = require("duneai");
-// console.log({ duneai});
-const { HelloWorld } = (0, duneai_1.importPrompts)("./src/skeleton/src/prompts.prompt");
+const { HelloWorld: content } = (0, duneai_1.importPrompts)("./src/skeleton/src/prompts.prompt");
 const runPrimeDynamic = () => __awaiter(void 0, void 0, void 0, function* () {
-    const PrimeDynamic = (0, duneai_1.createDynamic)("PrimeDynamic", {}, [{ HelloWorld }]);
-    const resultingState = yield PrimeDynamic.run();
-    console.log(resultingState);
+    // Create a dynamic with 4 examples, asking each model to say hello.
+    const exampleModels = ['gpt-4o-mini', 'gpt-4o', 'gpt-4', 'gpt-3.5-turbo'];
+    const PrimeDynamic = (0, duneai_1.createDynamic)({
+        name: "PrimeDynamic",
+        kind: duneai_1.TOT,
+        prompts: exampleModels.map(model => ({
+            name: `HelloWorld:${model}`,
+            content,
+            model
+        })),
+        log: true,
+    });
+    // Run the dynamic to run the examples.
+    const PrimeDynamicState = yield PrimeDynamic.run();
+    // Log the resulting state.
+    console.log({ PrimeDynamicState });
 });
 runPrimeDynamic();
