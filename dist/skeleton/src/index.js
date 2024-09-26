@@ -23,11 +23,11 @@ const runPrimeDynamic = () => __awaiter(void 0, void 0, void 0, function* () {
             content,
             model
         })),
-        log: false,
+        log: true,
     });
     // Run the dynamic to run the examples.
     const PrimeDynamicState = yield PrimeDynamic.run();
     // Log the resulting state.
-    console.log({ PrimeDynamicState });
+    // console.log({ PrimeDynamicState});
 });
 runPrimeDynamic();

@@ -10,5 +10,6 @@ dotenv_1.default.config();
 const getSettings = () => ({
     model: process.env.DEFAULT_MODEL || "gpt-4o-mini",
     adapter: process.env.DEFAULT_ADAPTER || "openai",
+    maxLogLength: process.env.MAX_LOG_LENGTH || '25',
 });
 exports.getSettings = getSettings;

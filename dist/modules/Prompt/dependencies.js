@@ -18,6 +18,7 @@ const fs_1 = __importDefault(require("fs"));
 const mustache_1 = __importDefault(require("mustache"));
 const constants_1 = require("../constants");
 const adapter_1 = require("../../adapter");
+const settings_1 = require("../settings");
 const utils_1 = require("../../utils");
 const logger_1 = __importDefault(require("../../middleware/logger"));
 const run = (prompt, state, log) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,16 +30,21 @@ const run = (prompt, state, log) => __awaiter(void 0, void 0, void 0, function* 
         logPrompt(prompt, 'sending', runningPrompt.content);
     const completion = yield performCompletion(runningPrompt);
     if (log)
-        logPrompt(prompt, 'complete', JSON.stringify(completion));
+        logPrompt(prompt, 'received', completion.content);
     return Promise.resolve(Object.assign(Object.assign(Object.assign({}, runningPrompt), suffixSpice(runningPrompt, completion.content || '', completion || {})), { completion: completion.content }));
 });
 exports.run = run;
 const logPrompt = (prompt, status, content) => {
-    const maxLength = 0;
+    const maxLength = parseInt((0, settings_1.getSettings)().maxLogLength, 10);
     const contentWithoutNewlines = content.replace(/\n/g, '');
-    const preview = contentWithoutNewlines.length > maxLength ? contentWithoutNewlines.substring(0, maxLength) + '...' : contentWithoutNewlines;
+    const preview = contentWithoutNewlines.length > maxLength
+        ? contentWithoutNewlines.substring(0, maxLength) + '...'
+        : contentWithoutNewlines;
     const { tokenCount } = (0, utils_1.countTokens)(content, 'gpt-4o-mini');
-    const message = `${prompt.name} - ${status.toUpperCase()}: ${preview} (Total tokens: ${tokenCount.toLocaleString()})`;
+    const prefix = `${status.toUpperCase()} (${tokenCount.toLocaleString()})`;
+    const paddedPrefix = prefix.padEnd(15, ' ');
+    const paddedName = prompt.name.padEnd(25, ' ');
+    const message = `${paddedPrefix} | ${paddedName} | ${preview}`;
     logger_1.default.info(message);
 };
 const importPrompts = (dirOrFilePath) => {
@@ -72,7 +78,7 @@ const interpolateSpice = (prompt) => {
 const prefixSpice = (prompt) => {
     const startedAt = new Date();
     const currentTime = new Date();
-    const seed = Math.random();
+    const seed = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     return Object.assign(Object.assign({}, prompt), { spice: Object.assign(Object.assign({}, prompt.spice), { currentTime,
             startedAt,
             seed }) });
@@ -85,7 +91,7 @@ const suffixSpice = (prompt, completion, raw) => {
     const { tokenCount: tokensSent } = (0, utils_1.countTokens)(prompt.content, prompt.model);
     const { tokenCount: tokensReceived } = (0, utils_1.countTokens)(completion, prompt.model);
     const totalTokens = tokensSent + tokensReceived;
-    return Object.assign(Object.assign({}, prompt), { spice: Object.assign(Object.assign({}, prompt.spice), { finishedAt,
+    return Object.assign(Object.assign({}, prompt), { spice: Object.assign(Object.assign({}, prompt.spice), { sentPrompt: prompt.content, finishedAt,
             duration, modelUsed: prompt.model, adapterUsed: prompt.adapter || 'openai', tokensSent,
             tokensReceived,
             totalTokens,
@@ -94,7 +100,9 @@ const suffixSpice = (prompt, completion, raw) => {
 const interpolateState = (prompt, state) => {
     const content = mustache_1.default.render(prompt.content, Object.assign(Object.assign({}, state), {
         C: state.context,
+        c: state.context,
         Context: state.context,
+        context: state.context,
     }));
     return Object.assign(Object.assign({}, prompt), { content });
 };
