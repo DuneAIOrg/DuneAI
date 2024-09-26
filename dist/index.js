@@ -1,56 +1,19 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CoT = exports.COT = exports.ToT = exports.TOT = exports.importPrompts = exports.createDynamic = exports.Iterator = exports.Dynamic = exports.Prompt = void 0;
-const Prompt_1 = __importStar(require("./modules/Prompt"));
-exports.Prompt = Prompt_1.default;
-Object.defineProperty(exports, "importPrompts", { enumerable: true, get: function () { return Prompt_1.importPrompts; } });
-const Dynamic_1 = __importStar(require("./modules/Dynamic"));
-exports.Dynamic = Dynamic_1.default;
-Object.defineProperty(exports, "createDynamic", { enumerable: true, get: function () { return Dynamic_1.createDynamic; } });
-const Iterator_1 = __importDefault(require("./modules/Iterator"));
-exports.Iterator = Iterator_1.default;
-const TOT = "treeOfThought";
-exports.TOT = TOT;
-const COT = "chainOfThought";
-exports.COT = COT;
-const CoT = COT;
-exports.CoT = CoT;
-const ToT = TOT;
-exports.ToT = ToT;
-exports.default = {
-    Prompt: Prompt_1.default,
-    Dynamic: Dynamic_1.default,
-    Iterator: Iterator_1.default,
+const Prompt_1 = require("./modules/Prompt");
+const Dynamic_1 = require("./modules/Dynamic");
+const Cybernetics_1 = require("./modules/Cybernetics");
+const constants_1 = require("./modules/constants");
+const moduleExports = {
     createDynamic: Dynamic_1.createDynamic,
     importPrompts: Prompt_1.importPrompts,
-    TOT,
-    ToT,
-    COT,
-    CoT,
+    Selector: Cybernetics_1.Selector,
+    Accumulator: Cybernetics_1.Accumulator,
+    Inverter: Cybernetics_1.Inverter,
+    TOT: constants_1.TOT,
+    ToT: constants_1.TOT,
+    COT: constants_1.COT,
+    CoT: constants_1.COT,
+    LAMBDA: constants_1.LAMBDA
 };
+exports.default = moduleExports;

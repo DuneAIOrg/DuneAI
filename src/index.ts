@@ -1,7 +1,7 @@
 import { importPrompts } from "./modules/Prompt";
 import { createDynamic } from "./modules/Dynamic";
 import { Accumulator, Inverter, Selector } from "./modules/Cybernetics";
-import { TOT, COT } from "./modules/constants";
+import { TOT, COT, LAMBDA } from "./modules/constants";
 import {
   PromptParamsType,
   LifecycleHookType,
@@ -18,14 +18,7 @@ import {
   SelectorType
 } from "./modules/types";
 
-export {
-  createDynamic,
-  importPrompts,
-  Selector,
-  Accumulator,
-  Inverter,
-  TOT,
-  COT,
+export type {
   PromptParamsType,
   LifecycleHookType,
   KeyValuePair,
@@ -39,9 +32,9 @@ export {
   PromptType,
   DynamicType,
   SelectorType
-};
+}
 
-export default {
+const moduleExports = {
   createDynamic,
   importPrompts,
   Selector,
@@ -51,4 +44,7 @@ export default {
   ToT: TOT,
   COT,
   CoT: COT,
-};
+  LAMBDA
+}
+
+export default moduleExports;

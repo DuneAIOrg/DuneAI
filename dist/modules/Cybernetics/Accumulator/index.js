@@ -1,23 +1,33 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Accumulator = void 0;
-const index_1 = require("../index");
+const constants_1 = require("../../constants");
 const DEFAULT_DELIMITER = ",";
 const pickName = (prompt) => {
     var _a, _b;
-    return typeof prompt === "object" && "name" in prompt
-        ? (prompt === null || prompt === void 0 ? void 0 : prompt.name) || false
+    return typeof prompt === "object" && "name" in prompt && typeof prompt.name === "string"
+        ? prompt.name
         : typeof prompt === "object"
             ? ((_b = (_a = Object.entries(prompt)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[0]) || false
-            : index_1.LAMBDA;
+            : constants_1.LAMBDA;
 };
 const pickContent = (prompt) => {
     var _a, _b;
-    // @ts-ignore
-    return typeof prompt === "object" && "content" in prompt
-        ? (prompt === null || prompt === void 0 ? void 0 : prompt.content) || false
+    return typeof prompt === "object" && "content" in prompt && typeof prompt.content === "string"
+        ? prompt.content
         : typeof prompt === "object"
-            ? ((_b = (_a = Object.entries(prompt)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[1]) || false
+            ? typeof ((_b = (_a = Object.entries(prompt)) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b[1]) === "string"
+                ? Object.entries(prompt)[0][1]
+                : false
             : false;
 };
 const performReplicate = (prompts, replicate, context, state) => {
@@ -34,7 +44,7 @@ const performReplicate = (prompts, replicate, context, state) => {
         const promptContent = pickContent(prompt);
         const promptObject = typeof prompt === "object"
             ? prompt
-            : { [promptName || index_1.LAMBDA]: promptContent };
+            : { [promptName || constants_1.LAMBDA]: promptContent };
         for (let i = 0; i < replicateCount; i++) {
             const newKey = `${promptName}_${i}`;
             result.push(Object.assign(Object.assign({}, promptObject), { name: newKey, content: promptContent || '', spice: {
@@ -56,7 +66,7 @@ const performDistribute = (completion, distribute, context, state) => {
     else if (distribute === true) {
         distributeDelimiter = DEFAULT_DELIMITER;
     }
-    return completion.split(distributeDelimiter);
+    return completion.split(distributeDelimiter).map((item) => item.trim());
 };
 const performAggregate = (completions, aggregate, context, state) => {
     let aggregateDelimiter = DEFAULT_DELIMITER;
@@ -74,7 +84,7 @@ const performAggregate = (completions, aggregate, context, state) => {
 // Changes string into an array and then back into a sorted list as an array
 // Accumulator('colors: 1) blue, 2) orange, 3) red', { distribute, aggregate })
 // returns: blue, orange, red
-const Accumulator = (basePrompts, options) => {
+const Accumulator = (_a) => __awaiter(void 0, [_a], void 0, function* ({ basePrompts, options }) {
     let prompts = [...basePrompts];
     let completion = options.completion || '';
     let completions;
@@ -97,6 +107,12 @@ const Accumulator = (basePrompts, options) => {
     completion = aggregate
         ? performAggregate(completions, aggregate, context, state)
         : completions;
-    return completion || completions || prompts;
-};
+    if (completions[0] !== '') {
+        return completions;
+    }
+    if (completion !== '' && completion[0] !== '') {
+        return completion;
+    }
+    return prompts;
+});
 exports.Accumulator = Accumulator;

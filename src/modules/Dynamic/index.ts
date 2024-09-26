@@ -41,7 +41,7 @@ export const createDynamic = (
   return {
     ...newDynamic,
     overrides: overrides ?? overrides,
-    run: (initialState: Partial<DynamicState>): Promise<Partial<DynamicState>> => 
-      run(initialState, newDynamic),
+    run: (initialState?: NestedObjectType): Promise<Partial<DynamicState>> => 
+      run(initialState as NestedObjectType, newDynamic),
   }
 }

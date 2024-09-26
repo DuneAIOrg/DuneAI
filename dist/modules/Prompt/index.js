@@ -1,54 +1,38 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.importPrompts = exports.parsePromptsFromFile = exports.importPrompt = exports.createPrompt = void 0;
-const path_1 = __importDefault(require("path"));
-const fs_1 = __importDefault(require("fs"));
+exports.createPrompt = exports.importPrompts = void 0;
+const settings_1 = require("../settings");
 const dependencies_1 = require("./dependencies");
-const createPrompt = (params, overrides = {}) => {
-    var _a, _b;
-    const promptDependencies = Object.assign(Object.assign({}, dependencies_1.defaultDependencies), overrides);
-    return Object.freeze(Object.assign(Object.assign({ name: (_a = params.name) !== null && _a !== void 0 ? _a : "defaultPrompt", model: params.model, adapter: (_b = params.adapter) !== null && _b !== void 0 ? _b : "GPT4ALL" }, params), { run: function (state) {
-            return promptDependencies.run(this, state);
-        } }));
-};
-exports.createPrompt = createPrompt;
-const Prompt = (params, overrides = {}) => (0, exports.createPrompt)(params, overrides);
-exports.default = Prompt;
-const importPrompt = (filePath) => {
-    const absolutePath = path_1.default.resolve(process.cwd(), filePath);
-    return fs_1.default.readFileSync(absolutePath, "utf8");
-};
-exports.importPrompt = importPrompt;
-const parsePromptsFromFile = (content) => {
-    const prompts = {};
-    const sections = content.split(/^#\s*(\w+)/gm);
-    for (let i = 1; i < sections.length; i += 2) {
-        const name = sections[i];
-        const promptContent = sections[i + 1].trim();
-        prompts[name] = promptContent;
-    }
-    return prompts;
-};
-exports.parsePromptsFromFile = parsePromptsFromFile;
-const importPrompts = (dirOrFilePath) => {
-    const absolutePath = path_1.default.resolve(process.cwd(), dirOrFilePath);
-    if (fs_1.default.lstatSync(absolutePath).isDirectory()) {
-        const prompts = {};
-        const filePaths = fs_1.default
-            .readdirSync(absolutePath)
-            .filter((file) => file.endsWith(".prompt"));
-        filePaths.forEach((filePath) => {
-            const fileName = path_1.default.basename(filePath, path_1.default.extname(filePath));
-            prompts[fileName] = (0, exports.importPrompt)(path_1.default.join(absolutePath, filePath));
-        });
-        return prompts;
+Object.defineProperty(exports, "importPrompts", { enumerable: true, get: function () { return dependencies_1.importPrompts; } });
+const createPrompt = (params) => __awaiter(void 0, void 0, void 0, function* () {
+    let newPrompt;
+    if (typeof params === 'function') {
+        return createPrompt(yield params());
     }
     else {
-        const content = (0, exports.importPrompt)(absolutePath);
-        return (0, exports.parsePromptsFromFile)(content);
+        if (typeof params === 'string') {
+            newPrompt = (0, dependencies_1.stringToPrompt)(params);
+        }
+        else if (typeof params === 'object' && !(params === null || params === void 0 ? void 0 : params.name)) {
+            const [name, content] = Object.entries(params)[0];
+            newPrompt = (0, dependencies_1.keyValuePairToPrompt)(name, content);
+        }
+        else if (typeof params === 'object') {
+            newPrompt = params;
+        }
+        else {
+            throw new Error('Invalid prompt params');
+        }
     }
-};
-exports.importPrompts = importPrompts;
+    return Object.assign(Object.assign(Object.assign({}, (0, settings_1.getSettings)()), newPrompt), { run: (state, log = false) => (0, dependencies_1.run)(newPrompt, state, log) });
+});
+exports.createPrompt = createPrompt;

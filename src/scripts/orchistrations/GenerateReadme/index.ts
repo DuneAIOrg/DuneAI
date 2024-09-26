@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-import { createDynamic, importPrompts, COT } from "../../..";
+// @ts-ignore
+import { createDynamic, importPrompts, COT } from "duneai";
+
 
 const fullPath = path.resolve(__dirname, "./prompts.prompt");
 const { Structure, Section, Edit } = importPrompts(fullPath);

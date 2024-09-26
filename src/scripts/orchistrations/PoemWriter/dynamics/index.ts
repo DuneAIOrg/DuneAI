@@ -1,5 +1,7 @@
 import * as path from "path";
-import { createDynamic, importPrompts, TOT } from "../../../";
+// @ts-ignore
+import { createDynamic, importPrompts, TOT } from "duneai";
+
 
 const fullPath = path.resolve(__dirname, "../prompts/Prompts.prompt");
 const { Continent, Languages, HelloWorld, Respond } = importPrompts(fullPath);
@@ -23,6 +25,6 @@ export const SayHelloWorld = createDynamic({
   kind: TOT,
   context,
   prompts: [{ HelloWorld }],
-  before: async (state) => await PickLocale.run(state),
-  after: async (state) => await RespondToAll.run(state),
+  before: async (state: any) => await PickLocale.run(state),
+  after: async (state: any) => await RespondToAll.run(state),
 });

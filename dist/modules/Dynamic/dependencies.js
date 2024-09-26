@@ -8,57 +8,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defaultDependencies = void 0;
+exports.run = void 0;
+const Prompt_1 = require("../Prompt");
+const constants_1 = require("../constants");
 const store_1 = require("../../store");
-const logger_1 = __importDefault(require("../../middleware/logger"));
-exports.defaultDependencies = {
-    before: () => __awaiter(void 0, void 0, void 0, function* () { }),
-    after: () => __awaiter(void 0, void 0, void 0, function* () { }),
-    runChainOfThought: (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
-        logger_1.default.info(`Running ${dynamic.name} Chain of Thought Dynamic`);
-        for (const prompt of dynamic.prompts || []) {
-            const { state, context } = store_1.useStore.getState();
-            const generation = yield prompt.run(Object.assign(Object.assign({}, state), { context }));
-            store_1.useStore.getState().setState(dynamic.name, prompt.name, generation);
-        }
-    }),
-    runTreeOfThought: (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
-        logger_1.default.info(`Running ${dynamic.name} Tree of Thought Dynamic`);
-        yield Promise.all((dynamic.prompts || []).map((prompt) => __awaiter(void 0, void 0, void 0, function* () {
-            const { state, context } = store_1.useStore.getState();
-            const generation = yield prompt.run(Object.assign(Object.assign({}, state), { context }));
-            store_1.useStore.getState().setState(dynamic.name, prompt.name, generation);
-        })));
-    }),
-    run(initialState, dynamic) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { initializeState, setContext } = store_1.useStore.getState();
-            // Initialize state and context
-            initializeState(initialState);
-            setContext(dynamic === null || dynamic === void 0 ? void 0 : dynamic.context);
-            if (dynamic.before) {
-                const beforeResult = (yield dynamic.before(Object.assign({}, store_1.useStore.getState())));
-                initializeState(beforeResult);
-            }
-            const strategy = dynamic.kind === "chainOfThought"
-                ? this.runChainOfThought
-                : this.runTreeOfThought;
-            if (strategy) {
-                yield strategy(dynamic);
-            }
-            else {
-                logger_1.default.error("Unknown dynamic type");
-                return {};
-            }
-            if (dynamic.after) {
-                const afterResult = (yield dynamic.after(Object.assign({}, store_1.useStore.getState())));
-                initializeState(afterResult);
-            }
-            return store_1.useStore.getState().state;
-        });
-    },
-};
+const run = (initialState, dynamic) => __awaiter(void 0, void 0, void 0, function* () {
+    const { initializeState, setContext } = store_1.useStore.getState();
+    initializeState(initialState);
+    // @ts-ignore
+    setContext(dynamic === null || dynamic === void 0 ? void 0 : dynamic.context);
+    if (dynamic.before) {
+        const beforeResult = (yield dynamic.before(store_1.useStore.getState().state));
+        initializeState(beforeResult);
+    }
+    const strategy = dynamic.kind === constants_1.COT
+        ? runChainOfThought
+        : runTreeOfThought;
+    yield strategy(dynamic);
+    if (dynamic.after) {
+        const afterResult = (yield dynamic.after(Object.assign({}, store_1.useStore.getState().state)));
+        initializeState(afterResult);
+    }
+    return store_1.useStore.getState().state;
+});
+exports.run = run;
+const runChainOfThought = (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
+    for (const prompt of dynamic.prompts || []) {
+        const { state, context } = store_1.useStore.getState();
+        const promptObject = yield (0, Prompt_1.createPrompt)(prompt);
+        const generation = yield promptObject.run(Object.assign(Object.assign({}, state), { context }), dynamic.log);
+        store_1.useStore.getState().setState(dynamic.name, generation.name, generation.completion);
+    }
+});
+const runTreeOfThought = (dynamic) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Promise.all(dynamic.prompts.map((prompt) => __awaiter(void 0, void 0, void 0, function* () {
+        const { state, context } = store_1.useStore.getState();
+        const promptObject = yield (0, Prompt_1.createPrompt)(prompt);
+        const generation = yield promptObject.run(Object.assign(Object.assign({}, state), { context: context }), dynamic.log);
+        store_1.useStore.getState().setState(dynamic.name, generation.name, generation.completion);
+    })));
+});
