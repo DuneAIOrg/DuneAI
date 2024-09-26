@@ -21,8 +21,8 @@ export const run = async(prompt: PromptType, state: DynamicState, log: boolean) 
 
   return Promise.resolve({
     // @ts-ignore
-    ...suffixSpice(runningPrompt, completion.content || '', completion.raw || {}),
     ...runningPrompt,
+    ...suffixSpice(runningPrompt, completion.content || '', completion || {}),
     completion: completion.content,
   });
 }
@@ -110,7 +110,7 @@ const suffixSpice = (prompt: PromptType, completion: string, raw: KeyValuePair):
       finishedAt,
       duration,
       modelUsed: prompt.model,
-      adapterUsed: prompt.adapter,
+      adapterUsed: prompt.adapter || 'openai',
       tokensSent,
       tokensReceived,
       totalTokens,
@@ -134,7 +134,7 @@ const interpolateState = (prompt: PromptType, state: DynamicState): PromptType =
 }
 
 const performCompletion = async(prompt: PromptType) => {
-  return await ask(prompt.content, prompt.adapter, prompt.model);
+  return await ask(prompt.content, prompt.adapter);
 }
 
 const importPrompt = (filePath: string): string => {

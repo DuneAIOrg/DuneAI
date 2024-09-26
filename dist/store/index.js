@@ -9,10 +9,13 @@ exports.useStore = (0, vanilla_1.createStore)((0, middleware_1.createPersistMidd
     setState: (dynamicName, key, value, spice) => set((store) => {
         var _a;
         const newState = Object.assign(Object.assign({}, store.state), { [dynamicName]: Object.assign(Object.assign({}, (store.state[dynamicName] || {})), { [key]: value }) });
-        if (spice) {
+        if (spice !== false) {
             return {
                 state: newState,
-                shadowState: Object.assign(Object.assign({}, store.shadowState), { [dynamicName]: Object.assign(Object.assign({}, (((_a = store.shadowState) === null || _a === void 0 ? void 0 : _a[dynamicName]) || {})), { [key]: { value, spice } }) }),
+                shadowState: Object.assign(Object.assign({}, store.shadowState), { [dynamicName]: Object.assign(Object.assign({}, (((_a = store.shadowState) === null || _a === void 0 ? void 0 : _a[dynamicName]) || {})), { [key]: {
+                            completion: value,
+                            spice: spice !== null && spice !== void 0 ? spice : false,
+                        } }) }),
             };
         }
         return { state: newState };

@@ -27,7 +27,6 @@
     "duneai": "github:DuneAIOrg/duneai",
     "fs-extra": "^11.2.0",
     "glob": "^10.4.1",
-    "gpt4all": "^4.0.0",
     "inquirer": "^10.0.1",
     "inquirer-search-checkbox": "^1.0.0",
     "mustache": "^4.2.0",

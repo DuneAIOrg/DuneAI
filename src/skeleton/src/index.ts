@@ -1,5 +1,5 @@
 // @ts-ignore
-import { importPrompts, createDynamic, TOT } from "duneai";
+import { importPrompts, createDynamic, TOT } from "../../";
 
 const { HelloWorld: content } = importPrompts("./src/skeleton/src/prompts.prompt");
 
@@ -15,7 +15,7 @@ const runPrimeDynamic = async () => {
       content,
       model
     })),
-    log: true,
+    log: false,
   });
 
   // Run the dynamic to run the examples.

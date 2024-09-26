@@ -30,7 +30,7 @@ const run = (prompt, state, log) => __awaiter(void 0, void 0, void 0, function* 
     const completion = yield performCompletion(runningPrompt);
     if (log)
         logPrompt(prompt, 'complete', JSON.stringify(completion));
-    return Promise.resolve(Object.assign(Object.assign(Object.assign({}, suffixSpice(runningPrompt, completion.content || '', completion.raw || {})), runningPrompt), { completion: completion.content }));
+    return Promise.resolve(Object.assign(Object.assign(Object.assign({}, runningPrompt), suffixSpice(runningPrompt, completion.content || '', completion || {})), { completion: completion.content }));
 });
 exports.run = run;
 const logPrompt = (prompt, status, content) => {
@@ -86,7 +86,7 @@ const suffixSpice = (prompt, completion, raw) => {
     const { tokenCount: tokensReceived } = (0, utils_1.countTokens)(completion, prompt.model);
     const totalTokens = tokensSent + tokensReceived;
     return Object.assign(Object.assign({}, prompt), { spice: Object.assign(Object.assign({}, prompt.spice), { finishedAt,
-            duration, modelUsed: prompt.model, adapterUsed: prompt.adapter, tokensSent,
+            duration, modelUsed: prompt.model, adapterUsed: prompt.adapter || 'openai', tokensSent,
             tokensReceived,
             totalTokens,
             raw }) });
@@ -99,7 +99,7 @@ const interpolateState = (prompt, state) => {
     return Object.assign(Object.assign({}, prompt), { content });
 };
 const performCompletion = (prompt) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, adapter_1.ask)(prompt.content, prompt.adapter, prompt.model);
+    return yield (0, adapter_1.ask)(prompt.content, prompt.adapter);
 });
 const importPrompt = (filePath) => {
     const absolutePath = path_1.default.resolve(process.cwd(), filePath);

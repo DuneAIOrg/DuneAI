@@ -49,7 +49,7 @@ const runChainOfThought = async (dynamic: DynamicType) => {
       dynamic.name, 
       generation.name, 
       generation.completion as string,
-      dynamic.log ?? generation.spice
+      dynamic.log ? generation.spice : false
     );
   }
 }
@@ -66,7 +66,7 @@ const runTreeOfThought = async (dynamic: DynamicType) => {
       dynamic.name, 
       generation.name, 
       generation.completion as string,
-      dynamic.log ?? generation.spice
+      dynamic.log ? generation.spice : false
     );
   }));
 }

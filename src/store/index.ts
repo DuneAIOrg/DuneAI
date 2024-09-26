@@ -6,7 +6,7 @@ export const useStore = createStore<DynamicState>(
   createPersistMiddleware("state.json")((set: Function) => ({
     state: {},
     context: {},
-    setState: (dynamicName: string, key: string, value: any, spice?: SpiceType) =>
+    setState: (dynamicName: string, key: string, value: any, spice?: SpiceType | boolean) =>
       set((store: { state: Record<string, any>; shadowState?: Record<string, any> }) => {
         const newState = {
           ...store.state,
@@ -16,14 +16,17 @@ export const useStore = createStore<DynamicState>(
           },
         };
 
-        if (spice) {
+        if (spice !== false) {
           return {
             state: newState,
             shadowState: {
               ...store.shadowState,
               [dynamicName]: {
                 ...(store.shadowState?.[dynamicName] || {}),
-                [key]: { value, spice },
+                [key]: { 
+                  completion: value, 
+                  spice: spice ?? false,
+                },
               },
             },
           };

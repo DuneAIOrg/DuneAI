@@ -1,10 +1,10 @@
 {
   "state": {
     "PrimeDynamic": {
-      "HelloWorld:gpt-4o": "Hello, world! 🌍 How can I assist you today?",
+      "HelloWorld:gpt-3.5-turbo": "Hello, world! 🌍 How can I assist you today?",
+      "HelloWorld:gpt-4": "Hello, world! 🌍✨ How can I assist you today?",
       "HelloWorld:gpt-4o-mini": "Hello, world! 🌍✨ How can I assist you today?",
-      "HelloWorld:gpt-3.5-turbo": "Hello world! It's nice to meet you.",
-      "HelloWorld:gpt-4": "Hello, world!"
+      "HelloWorld:gpt-4o": "Hello, world! 🌍 How can I assist you today?"
     }
   },
   "context": {}
