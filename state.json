@@ -1,0 +1,199 @@
+{
+  "state": {
+    "PrimeDynamic": {
+      "HelloWorld:gpt-4o": "Hello, world! 🌍 Did you know that during this time of year, many parts of the Northern Hemisphere begin to experience the beautiful colors of autumn as leaves change from green to vibrant shades of red, yellow, and orange? Enjoy the seasonal transition! 🍂",
+      "HelloWorld:gpt-4": "Hello, world! 🌍 Did you know that on this date, September 26th, 2024, we are just a few days away from the International Day of Older Persons, which is celebrated on October 1st? It’s a day dedicated to raising awareness about issues affecting the elderly and promoting their rights!",
+      "HelloWorld:gpt-3.5-turbo": "Hello, world! 🌍 Did you know that on September 26, 2024, the sun is setting later as we approach the autumn equinox, which occurred just a few days earlier on September 23? This means that daylight is gradually decreasing, allowing for beautiful sunsets and a shift in season. Enjoy the changing light!",
+      "HelloWorld:gpt-4o-mini": "Hello, world! 🌍 Did you know that right now, on September 26, 2024, at 4:51 PM PDT, you are experiencing a moment that is unique in the history of time? Every nanosecond, the present becomes the past and is lost forever, making this instant completely one-of-a-kind! So cherish it!"
+    }
+  },
+  "context": {},
+  "shadowState": {
+    "PrimeDynamic": {
+      "HelloWorld:gpt-4o": {
+        "completion": "Hello, world! 🌍 Did you know that during this time of year, many parts of the Northern Hemisphere begin to experience the beautiful colors of autumn as leaves change from green to vibrant shades of red, yellow, and orange? Enjoy the seasonal transition! 🍂",
+        "spice": {
+          "currentTime": "2024-09-26T23:51:04.299Z",
+          "startedAt": "2024-09-26T23:51:04.299Z",
+          "seed": 3631044743976313,
+          "sentPrompt": "Say hello to the world! And include a neat fact about the current time.\n\ncurrent time: Thu Sep 26 2024 16:51:04 GMT-0700 (Pacific Daylight Time)\n\nseed: 3631044743976313",
+          "finishedAt": "2024-09-26T23:51:05.777Z",
+          "duration": 1478,
+          "modelUsed": "gpt-4o",
+          "adapterUsed": "openai",
+          "tokensSent": 51,
+          "tokensReceived": 53,
+          "totalTokens": 104,
+          "raw": {
+            "content": "Hello, world! 🌍 Did you know that during this time of year, many parts of the Northern Hemisphere begin to experience the beautiful colors of autumn as leaves change from green to vibrant shades of red, yellow, and orange? Enjoy the seasonal transition! 🍂",
+            "meta": {
+              "id": "chatcmpl-ABsYDrKVpcO5ZOr4LjID7vDf6EncS",
+              "object": "chat.completion",
+              "created": 1727394665,
+              "model": "gpt-4o-mini-2024-07-18",
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello, world! 🌍 Did you know that during this time of year, many parts of the Northern Hemisphere begin to experience the beautiful colors of autumn as leaves change from green to vibrant shades of red, yellow, and orange? Enjoy the seasonal transition! 🍂",
+                    "refusal": null
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 58,
+                "completion_tokens": 53,
+                "total_tokens": 111,
+                "completion_tokens_details": {
+                  "reasoning_tokens": 0
+                }
+              },
+              "system_fingerprint": "fp_f85bea6784"
+            }
+          }
+        }
+      },
+      "HelloWorld:gpt-4": {
+        "completion": "Hello, world! 🌍 Did you know that on this date, September 26th, 2024, we are just a few days away from the International Day of Older Persons, which is celebrated on October 1st? It’s a day dedicated to raising awareness about issues affecting the elderly and promoting their rights!",
+        "spice": {
+          "currentTime": "2024-09-26T23:51:04.387Z",
+          "startedAt": "2024-09-26T23:51:04.387Z",
+          "seed": 7037105324913045,
+          "sentPrompt": "Say hello to the world! And include a neat fact about the current time.\n\ncurrent time: Thu Sep 26 2024 16:51:04 GMT-0700 (Pacific Daylight Time)\n\nseed: 7037105324913045",
+          "finishedAt": "2024-09-26T23:51:06.018Z",
+          "duration": 1631,
+          "modelUsed": "gpt-4",
+          "adapterUsed": "openai",
+          "tokensSent": 51,
+          "tokensReceived": 66,
+          "totalTokens": 117,
+          "raw": {
+            "content": "Hello, world! 🌍 Did you know that on this date, September 26th, 2024, we are just a few days away from the International Day of Older Persons, which is celebrated on October 1st? It’s a day dedicated to raising awareness about issues affecting the elderly and promoting their rights!",
+            "meta": {
+              "id": "chatcmpl-ABsYDXGmfxbUlFkSgEa4FmLdfhZQJ",
+              "object": "chat.completion",
+              "created": 1727394665,
+              "model": "gpt-4o-mini-2024-07-18",
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello, world! 🌍 Did you know that on this date, September 26th, 2024, we are just a few days away from the International Day of Older Persons, which is celebrated on October 1st? It’s a day dedicated to raising awareness about issues affecting the elderly and promoting their rights!",
+                    "refusal": null
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 58,
+                "completion_tokens": 65,
+                "total_tokens": 123,
+                "completion_tokens_details": {
+                  "reasoning_tokens": 0
+                }
+              },
+              "system_fingerprint": "fp_f85bea6784"
+            }
+          }
+        }
+      },
+      "HelloWorld:gpt-3.5-turbo": {
+        "completion": "Hello, world! 🌍 Did you know that on September 26, 2024, the sun is setting later as we approach the autumn equinox, which occurred just a few days earlier on September 23? This means that daylight is gradually decreasing, allowing for beautiful sunsets and a shift in season. Enjoy the changing light!",
+        "spice": {
+          "currentTime": "2024-09-26T23:51:04.472Z",
+          "startedAt": "2024-09-26T23:51:04.472Z",
+          "seed": 3339778505859983,
+          "sentPrompt": "Say hello to the world! And include a neat fact about the current time.\n\ncurrent time: Thu Sep 26 2024 16:51:04 GMT-0700 (Pacific Daylight Time)\n\nseed: 3339778505859983",
+          "finishedAt": "2024-09-26T23:51:06.174Z",
+          "duration": 1702,
+          "modelUsed": "gpt-3.5-turbo",
+          "adapterUsed": "openai",
+          "tokensSent": 51,
+          "tokensReceived": 69,
+          "totalTokens": 120,
+          "raw": {
+            "content": "Hello, world! 🌍 Did you know that on September 26, 2024, the sun is setting later as we approach the autumn equinox, which occurred just a few days earlier on September 23? This means that daylight is gradually decreasing, allowing for beautiful sunsets and a shift in season. Enjoy the changing light!",
+            "meta": {
+              "id": "chatcmpl-ABsYCDSHYnvKhIIODT9cegs7kdjog",
+              "object": "chat.completion",
+              "created": 1727394664,
+              "model": "gpt-4o-mini-2024-07-18",
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello, world! 🌍 Did you know that on September 26, 2024, the sun is setting later as we approach the autumn equinox, which occurred just a few days earlier on September 23? This means that daylight is gradually decreasing, allowing for beautiful sunsets and a shift in season. Enjoy the changing light!",
+                    "refusal": null
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 58,
+                "completion_tokens": 67,
+                "total_tokens": 125,
+                "completion_tokens_details": {
+                  "reasoning_tokens": 0
+                }
+              },
+              "system_fingerprint": "fp_f85bea6784"
+            }
+          }
+        }
+      },
+      "HelloWorld:gpt-4o-mini": {
+        "completion": "Hello, world! 🌍 Did you know that right now, on September 26, 2024, at 4:51 PM PDT, you are experiencing a moment that is unique in the history of time? Every nanosecond, the present becomes the past and is lost forever, making this instant completely one-of-a-kind! So cherish it!",
+        "spice": {
+          "currentTime": "2024-09-26T23:51:04.157Z",
+          "startedAt": "2024-09-26T23:51:04.157Z",
+          "seed": 6462867773202897,
+          "sentPrompt": "Say hello to the world! And include a neat fact about the current time.\n\ncurrent time: Thu Sep 26 2024 16:51:04 GMT-0700 (Pacific Daylight Time)\n\nseed: 6462867773202897",
+          "finishedAt": "2024-09-26T23:51:06.528Z",
+          "duration": 2371,
+          "modelUsed": "gpt-4o-mini",
+          "adapterUsed": "openai",
+          "tokensSent": 51,
+          "tokensReceived": 72,
+          "totalTokens": 123,
+          "raw": {
+            "content": "Hello, world! 🌍 Did you know that right now, on September 26, 2024, at 4:51 PM PDT, you are experiencing a moment that is unique in the history of time? Every nanosecond, the present becomes the past and is lost forever, making this instant completely one-of-a-kind! So cherish it!",
+            "meta": {
+              "id": "chatcmpl-ABsYCIpSwQ0nkZUZfi4muLMDIRuP6",
+              "object": "chat.completion",
+              "created": 1727394664,
+              "model": "gpt-4o-mini-2024-07-18",
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "Hello, world! 🌍 Did you know that right now, on September 26, 2024, at 4:51 PM PDT, you are experiencing a moment that is unique in the history of time? Every nanosecond, the present becomes the past and is lost forever, making this instant completely one-of-a-kind! So cherish it!",
+                    "refusal": null
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 58,
+                "completion_tokens": 72,
+                "total_tokens": 130,
+                "completion_tokens_details": {
+                  "reasoning_tokens": 0
+                }
+              },
+              "system_fingerprint": "fp_f85bea6784"
+            }
+          }
+        }
+      }
+    }
+  }
+}
