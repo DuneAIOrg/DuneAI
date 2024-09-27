@@ -208,7 +208,7 @@ const createPackageJson = (projectDir, { typescript, projectName }) => {
 
       // Use the example in 'skeleton' folder
       if (example) {
-        const exampleDir = path.join(__dirname, 'skeleton');
+        const exampleDir = path.join(__dirname, 'src', 'skeleton');
         fs.copySync(exampleDir, projectDir);
 
         // Update the example code to use correct paths and import statements
