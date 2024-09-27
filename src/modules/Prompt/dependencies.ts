@@ -42,10 +42,40 @@ const logPrompt = (prompt: PromptType, status: 'sending' | 'received', content: 
   Logger.info(message);
 }
 
+function getCallerFile(): string {
+  const originalFunc = Error.prepareStackTrace;
+
+  try {
+    const err = new Error();
+    let callerfile: string | undefined;
+
+    Error.prepareStackTrace = function (err, stack) { return stack; };
+
+    const currentfile = (err.stack as unknown as NodeJS.CallSite[]).shift()!.getFileName();
+
+    while (err.stack && (err.stack as unknown as NodeJS.CallSite[]).length) {
+      const caller = (err.stack as unknown as NodeJS.CallSite[]).shift()!;
+      callerfile = caller.getFileName();
+
+      if (currentfile !== callerfile) {
+        return callerfile!;
+      }
+    }
+  } catch (e) {
+  } finally {
+    Error.prepareStackTrace = originalFunc;
+  }
+
+  return "";
+}
+
 export const importPrompts = (
   dirOrFilePath: string,
 ): Record<string, string> => {
-  const absolutePath = path.resolve(__dirname, dirOrFilePath);
+  const callerFile = getCallerFile();
+  const callerDir = path.dirname(callerFile);
+
+  const absolutePath = path.resolve(callerDir, dirOrFilePath);
 
   if (fs.lstatSync(absolutePath).isDirectory()) {
     const prompts: Record<string, string> = {};
@@ -66,8 +96,7 @@ export const importPrompts = (
 };
 
 const importPrompt = (filePath: string): string => {
-  const absolutePath = path.resolve(__dirname, filePath);
-  return fs.readFileSync(absolutePath, "utf8");
+  return fs.readFileSync(filePath, "utf8");
 };
 
 const interpolateSpice = (prompt: PromptType): PromptType => {

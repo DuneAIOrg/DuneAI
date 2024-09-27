@@ -1,7 +1,7 @@
 // @ts-ignore
 import { importPrompts, createDynamic, TOT } from "duneai";
 
-const { HelloWorld: content } = importPrompts("./src/prompts.prompt");
+const { HelloWorld: content } = importPrompts("./prompts.prompt");
 
 const runPrimeDynamic = async () => {
 
