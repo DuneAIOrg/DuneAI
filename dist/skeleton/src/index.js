@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 const duneai_1 = require("duneai");
-const { HelloWorld: content } = (0, duneai_1.importPrompts)("./src/prompts.prompt");
+const { HelloWorld: content } = (0, duneai_1.importPrompts)("./prompts.prompt");
 const runPrimeDynamic = async () => {
     // Create a dynamic with 4 examples, asking each model to say hello.
     const exampleModels = ['gpt-4o-mini', 'gpt-4o', 'gpt-4', 'gpt-3.5-turbo'];

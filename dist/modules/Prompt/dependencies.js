@@ -38,8 +38,32 @@ const logPrompt = (prompt, status, content) => {
     const message = `${paddedPrefix} | ${paddedName} | ${preview}`;
     logger_1.default.info(message);
 };
+function getCallerFile() {
+    const originalFunc = Error.prepareStackTrace;
+    try {
+        const err = new Error();
+        let callerfile;
+        Error.prepareStackTrace = function (err, stack) { return stack; };
+        const currentfile = err.stack.shift().getFileName();
+        while (err.stack && err.stack.length) {
+            const caller = err.stack.shift();
+            callerfile = caller.getFileName();
+            if (currentfile !== callerfile) {
+                return callerfile;
+            }
+        }
+    }
+    catch (e) {
+    }
+    finally {
+        Error.prepareStackTrace = originalFunc;
+    }
+    return "";
+}
 const importPrompts = (dirOrFilePath) => {
-    const absolutePath = path_1.default.resolve(__dirname, dirOrFilePath);
+    const callerFile = getCallerFile();
+    const callerDir = path_1.default.dirname(callerFile);
+    const absolutePath = path_1.default.resolve(callerDir, dirOrFilePath);
     if (fs_1.default.lstatSync(absolutePath).isDirectory()) {
         const prompts = {};
         const filePaths = fs_1.default
@@ -58,8 +82,7 @@ const importPrompts = (dirOrFilePath) => {
 };
 exports.importPrompts = importPrompts;
 const importPrompt = (filePath) => {
-    const absolutePath = path_1.default.resolve(__dirname, filePath);
-    return fs_1.default.readFileSync(absolutePath, "utf8");
+    return fs_1.default.readFileSync(filePath, "utf8");
 };
 const interpolateSpice = (prompt) => {
     const interpolate = (content, params) => {
