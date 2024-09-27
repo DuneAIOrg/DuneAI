@@ -1,79 +1,52 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.disposeModel = exports.ask = void 0;
-const gpt = __importStar(require("gpt4all"));
-const throttling_1 = require("../utils/throttling");
-// Load or get the already loaded model
-function getModel(modelPath_1) {
-    return __awaiter(this, arguments, void 0, function* (modelPath, device = "cpu") {
-        let model = null;
-        try {
-            model = yield gpt.loadModel(modelPath, { device });
-        }
-        catch (error) {
-            console.error("Failed to load model:", error);
-            throw error;
-        }
-        return model;
-    });
-}
-const getCompletion = (content, options) => __awaiter(void 0, void 0, void 0, function* () {
-    // @ts-ignore
-    const modelPath = options.model;
-    const modelInstance = yield getModel(modelPath, options.device || "cpu");
-    const chat = yield modelInstance.createChatSession();
-    try {
-        const completion = yield gpt.createCompletion(chat, content, options);
-        (0, exports.disposeModel)(modelInstance, modelPath);
-        return completion.choices[0].message.content;
+exports.ask = void 0;
+require("dotenv/config");
+const getBaseUrl = (options) => {
+    const url = new URL('http://localhost:4891');
+    if (options === null || options === void 0 ? void 0 : options.host) {
+        url.host = options.host;
     }
-    catch (error) {
-        console.error("Error during completion:", error);
-        (0, exports.disposeModel)(modelInstance, modelPath);
-        throw error;
+    if (options === null || options === void 0 ? void 0 : options.protocol) {
+        url.protocol = options.protocol;
     }
-});
-const ask = (prompt, options) => __awaiter(void 0, void 0, void 0, function* () {
-    return (yield (0, throttling_1.throttledOperation)(() => getCompletion(prompt, options), {
-        id: prompt,
-    }));
-});
-exports.ask = ask;
-const disposeModel = (model, name) => {
-    if (model) {
-        model.dispose();
+    if (options === null || options === void 0 ? void 0 : options.port) {
+        url.port = options.port.toString();
     }
+    return url.toString();
 };
-exports.disposeModel = disposeModel;
+const getCompletion = async (content, options) => {
+    var _a, _b, _c, _d;
+    const params = Object.assign({ messages: [{ role: "user", content }], max_tokens: 512, temperature: 0.45 }, options);
+    // @ts-expect-error
+    const { adapter: _ } = params, gpt4allParams = __rest(params, ["adapter"]);
+    const apiBaseUrl = getBaseUrl(options);
+    const response = await fetch(apiBaseUrl + 'v1/chat/completions', {
+        method: 'POST',
+        body: JSON.stringify(gpt4allParams),
+    });
+    if (!response.ok) {
+        throw new Error(`GTP4All API error: ${response.statusText}`);
+    }
+    const chatCompletion = await response.json();
+    return {
+        content: (_d = (_c = (_b = (_a = chatCompletion === null || chatCompletion === void 0 ? void 0 : chatCompletion.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) !== null && _d !== void 0 ? _d : '',
+        meta: chatCompletion
+    };
+};
+const ask = async (prompt, options) => {
+    const result = await getCompletion(prompt, options);
+    return { content: result.content, meta: result.meta };
+};
+exports.ask = ask;
