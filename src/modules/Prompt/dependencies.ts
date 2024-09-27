@@ -45,7 +45,7 @@ const logPrompt = (prompt: PromptType, status: 'sending' | 'received', content: 
 export const importPrompts = (
   dirOrFilePath: string,
 ): Record<string, string> => {
-  const absolutePath = path.resolve(process.cwd(), dirOrFilePath);
+  const absolutePath = path.resolve(__dirname, dirOrFilePath);
 
   if (fs.lstatSync(absolutePath).isDirectory()) {
     const prompts: Record<string, string> = {};
@@ -63,6 +63,11 @@ export const importPrompts = (
     const content = importPrompt(absolutePath);
     return parsePromptsFromFile(content);
   }
+};
+
+const importPrompt = (filePath: string): string => {
+  const absolutePath = path.resolve(__dirname, filePath);
+  return fs.readFileSync(absolutePath, "utf8");
 };
 
 const interpolateSpice = (prompt: PromptType): PromptType => {
@@ -143,11 +148,6 @@ const interpolateState = (prompt: PromptType, state: DynamicState): PromptType =
 const performCompletion = async(prompt: PromptType) => {
   return await ask(prompt.content, prompt.adapter);
 }
-
-const importPrompt = (filePath: string): string => {
-  const absolutePath = path.resolve(process.cwd(), filePath);
-  return fs.readFileSync(absolutePath, "utf8");
-};
 
 const parsePromptsFromFile = (
   content: string,
