@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Accumulator = void 0;
 const constants_1 = require("../../constants");
@@ -84,7 +75,7 @@ const performAggregate = (completions, aggregate, context, state) => {
 // Changes string into an array and then back into a sorted list as an array
 // Accumulator('colors: 1) blue, 2) orange, 3) red', { distribute, aggregate })
 // returns: blue, orange, red
-const Accumulator = (_a) => __awaiter(void 0, [_a], void 0, function* ({ basePrompts, options }) {
+const Accumulator = async ({ basePrompts, options }) => {
     let prompts = [...basePrompts];
     let completion = options.completion || '';
     let completions;
@@ -114,5 +105,5 @@ const Accumulator = (_a) => __awaiter(void 0, [_a], void 0, function* ({ basePro
         return completion;
     }
     return prompts;
-});
+};
 exports.Accumulator = Accumulator;

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,18 +12,18 @@ const adapter_1 = require("../../adapter");
 const settings_1 = require("../settings");
 const utils_1 = require("../../utils");
 const logger_1 = __importDefault(require("../../middleware/logger"));
-const run = (prompt, state, log) => __awaiter(void 0, void 0, void 0, function* () {
+const run = async (prompt, state, log) => {
     let runningPrompt = prompt;
     runningPrompt = prefixSpice(runningPrompt);
     runningPrompt = interpolateSpice(runningPrompt);
     runningPrompt = interpolateState(runningPrompt, state);
     if (log)
         logPrompt(prompt, 'sending', runningPrompt.content);
-    const completion = yield performCompletion(runningPrompt);
+    const completion = await performCompletion(runningPrompt);
     if (log)
         logPrompt(prompt, 'received', completion.content);
     return Promise.resolve(Object.assign(Object.assign(Object.assign({}, runningPrompt), suffixSpice(runningPrompt, completion.content || '', completion || {})), { completion: completion.content }));
-});
+};
 exports.run = run;
 const logPrompt = (prompt, status, content) => {
     const maxLength = parseInt((0, settings_1.getSettings)().maxLogLength, 10);
@@ -48,7 +39,7 @@ const logPrompt = (prompt, status, content) => {
     logger_1.default.info(message);
 };
 const importPrompts = (dirOrFilePath) => {
-    const absolutePath = path_1.default.resolve(process.cwd(), dirOrFilePath);
+    const absolutePath = path_1.default.resolve(__dirname, dirOrFilePath);
     if (fs_1.default.lstatSync(absolutePath).isDirectory()) {
         const prompts = {};
         const filePaths = fs_1.default
@@ -66,6 +57,10 @@ const importPrompts = (dirOrFilePath) => {
     }
 };
 exports.importPrompts = importPrompts;
+const importPrompt = (filePath) => {
+    const absolutePath = path_1.default.resolve(__dirname, filePath);
+    return fs_1.default.readFileSync(absolutePath, "utf8");
+};
 const interpolateSpice = (prompt) => {
     const interpolate = (content, params) => {
         const keys = Object.keys(params);
@@ -106,12 +101,8 @@ const interpolateState = (prompt, state) => {
     }));
     return Object.assign(Object.assign({}, prompt), { content });
 };
-const performCompletion = (prompt) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield (0, adapter_1.ask)(prompt.content, prompt.adapter);
-});
-const importPrompt = (filePath) => {
-    const absolutePath = path_1.default.resolve(process.cwd(), filePath);
-    return fs_1.default.readFileSync(absolutePath, "utf8");
+const performCompletion = async (prompt) => {
+    return await (0, adapter_1.ask)(prompt.content, prompt.adapter);
 };
 const parsePromptsFromFile = (content) => {
     const prompts = {};
