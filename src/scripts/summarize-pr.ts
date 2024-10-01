@@ -19,34 +19,24 @@ async function main() {
     owner,
     pull_number
   })
-  if (!pull.data.user) {
-    throw new Error('Could not find the user who opened the pull request')
-  }
 
-  const comments = await octokit.rest.issues.listComments({
-    repo,
-    owner,
-    // "All pull requests are an issue, but not all issues are pull requests."
-    issue_number: pull_number
-  })
-
-  // @ts-ignore
-  const comment = comments.data[0]
-  if (!comment) {
-    throw new Error('Could not find the main comment')
+  if (!pull) {
+    throw new Error('Pull request not found')
   }
 
   console.log('Summarizing pull request...')
   const newData = await summarizePullRequest(changes)
 
+  const existing = (pull.data.body ?? '').split('<!-- end-duneai-summary -->')[1]
+
   // Edit the main comment with the summary
-  await octokit.rest.issues.updateComment({
+  await octokit.rest.pulls.update({
     repo,
     owner,
-    comment_id: comment.id,
-    body: (comment.body ?? '').split('# Summary by DuneAI')[0] + `# Summary by DuneAI\n${newData}`
+    pull_number,
+    body: `# Summary by DuneAI\n${newData}\n<!-- end-duneai-summary -->\n${existing}`
   })
 }
 
-main().catch(console.error)
+main()
 
