@@ -51,6 +51,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@octokit/rest": "^21.0.2",
     "@types/node": "^14.0.0",
     "concurrently": "^9.0.1",
     "gpt4all": "^4.0.0",

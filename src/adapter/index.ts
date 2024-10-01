@@ -12,9 +12,6 @@ export const ask = async (
   modelName: string = DEFAULT_MODEL,
   options?: any
 ) => {
-  console.log('getCompletion:prompt', prompt)
-  console.log('getCompletion:options', options)
-
   const adapter = Providers[adapterName as keyof typeof Providers];
   if (typeof adapter !== 'function') {
     throw new TypeError(`Adapter ${adapterName} is not valid, here are the available adapters: ${Object.keys(Providers).join(', ')}`);

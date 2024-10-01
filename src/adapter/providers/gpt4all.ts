@@ -1,19 +1,24 @@
 import "dotenv/config";
-import { ChatSession, CompletionResult, createCompletion } from "gpt4all";
+import {CompletionResult, createCompletion, loadModel} from "gpt4all";
+import {resolve} from "node:path";
+import process from "node:process";
 
 export type GetCompletionOptions = {
-    model: string;
-    host?: string;
-    protocol?: 'http' | 'https';
-    port?: number;
-    max_tokens?: number;
-    temperature?: number;
+  useLocalSession: false;
+  model: string;
+  host?: string;
+  protocol?: 'http' | 'https';
+  port?: number;
+  max_tokens?: number;
+  temperature?: number;
 } | {
-  session: ChatSession
+  useLocalSession: true
+  model: string;
+  modelPath?: string;
 }
 
 const getBaseUrl = (options?: GetCompletionOptions) => {
-  if (options && 'session' in options) {
+  if (options && options.useLocalSession) {
     return
   }
 
@@ -34,11 +39,9 @@ const getBaseUrl = (options?: GetCompletionOptions) => {
 }
 
 const getCompletion = async (content: string, options?: GetCompletionOptions) => {
-  const isSession = options && 'session' in options
-
   const params = {
-    max_tokens: isSession ? 512 : options?.max_tokens ?? 512,
-    temperature: isSession ? 0.24 : options?.temperature ?? 0.24,
+    max_tokens: options?.useLocalSession ? 512 : options?.max_tokens ?? 512,
+    temperature: options?.useLocalSession ? 0.24 : options?.temperature ?? 0.24,
     ...options,
   };
 
@@ -49,10 +52,19 @@ const getCompletion = async (content: string, options?: GetCompletionOptions) =>
 
   let completion: CompletionResult
 
-  if (isSession) {
-    completion = await createCompletion(options.session, content, {
-      tokensSize: gpt4allParams.max_tokens,
-      temperature: gpt4allParams.temperature,
+  if (options?.useLocalSession) {
+    const model = await loadModel(options.model, {
+      nCtx: 32_000,
+      modelPath: resolve(process.cwd(), options.modelPath ?? 'models'),
+    })
+
+    const session = await model.createChatSession({
+      nCtx: 32_000,
+      temperature: gpt4allParams.temperature
+    })
+
+    completion = await createCompletion(session, content, {
+      nCtx: 32_000,
     })
   } else {
     const response = await fetch(apiBaseUrl + 'v1/chat/completions', {
