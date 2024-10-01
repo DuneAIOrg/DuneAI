@@ -1,0 +1,6 @@
+public/
+src/
+.github/
+README.md
+state.json
+tsconfig.json
