@@ -1,0 +1,32 @@
+# Structure
+
+Summarize the current pull request.
+
+Here are the changes in the pull request:
+{{ context.changes }}
+
+File contents from this project:
+{{ context.projectFileContents }}
+
+# Section
+
+You are writing a summary for a pull request. This is the structure of the summary:
+{{ context.structure.Structure.Structure }}
+
+File contents from this project:
+{{ context.extractedInfo }}
+
+Here is what has been written so far:
+{{ context.allSections }}
+
+Assume other sections will cover their own topics, do not duplicate content.
+
+Write this section: {{ context.currentSection }}
+
+# Edit
+Edit the final copy of the pull request summary.
+
+Here is the rough draft of the summary:
+{{ context.allSections }}
+
+Write the best version of this. Do not repeat content and make the entire summary consistent and clear.

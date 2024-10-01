@@ -32,3 +32,4 @@ yarn.lock
 
 # Other stuff
 /dist
+*.gguf

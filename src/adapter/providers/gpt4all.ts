@@ -1,15 +1,22 @@
 import "dotenv/config";
+import { ChatSession, CompletionResult, createCompletion } from "gpt4all";
 
-export interface GetCompletionOptions {
+export type GetCompletionOptions = {
     model: string;
     host?: string;
     protocol?: 'http' | 'https';
     port?: number;
     max_tokens?: number;
     temperature?: number;
+} | {
+  session: ChatSession
 }
 
 const getBaseUrl = (options?: GetCompletionOptions) => {
+  if (options && 'session' in options) {
+    return
+  }
+
    const url = new URL('http://localhost:4891');
    if (options?.host) {
      url.host = options.host;
@@ -27,10 +34,11 @@ const getBaseUrl = (options?: GetCompletionOptions) => {
 }
 
 const getCompletion = async (content: string, options?: GetCompletionOptions) => {
+  const isSession = options && 'session' in options
+
   const params = {
-    messages: [{ role: "user", content }],
-    max_tokens: options?.max_tokens ?? 512,
-    temperature: options?.temperature ?? 0.24,
+    max_tokens: isSession ? 512 : options?.max_tokens ?? 512,
+    temperature: isSession ? 0.24 : options?.temperature ?? 0.24,
     ...options,
   };
 
@@ -39,20 +47,29 @@ const getCompletion = async (content: string, options?: GetCompletionOptions) =>
 
   const apiBaseUrl = getBaseUrl(options);
 
-  const response = await fetch(apiBaseUrl + 'v1/chat/completions', {
-    method: 'POST',
-    body: JSON.stringify(gpt4allParams),
-  });
+  let completion: CompletionResult
 
-  if (!response.ok) {
-    throw new Error(`GTP4All API error: ${response.statusText}`);
+  if (isSession) {
+    completion = await createCompletion(options.session, content, {
+      tokensSize: gpt4allParams.max_tokens,
+      temperature: gpt4allParams.temperature,
+    })
+  } else {
+    const response = await fetch(apiBaseUrl + 'v1/chat/completions', {
+      method: 'POST',
+      body: JSON.stringify(gpt4allParams),
+    });
+
+    if (!response.ok) {
+      throw new Error(`GTP4All API error: ${response.statusText}`);
+    }
+
+    completion = await response.json();
   }
 
-  const chatCompletion = await response.json();
-
   return {
-    content: chatCompletion?.choices?.[0]?.message?.content ?? '',
-    meta: chatCompletion
+    content: completion?.choices?.[0]?.message?.content ?? '',
+    meta: completion
   };
 };
 
