@@ -30,7 +30,7 @@ jobs:
 
       - name: Bump Versions / Push Tags
         id: tag_version_release
-        uses: mathieudutour/github-tag-action@v6
+        uses: mathieudutour/github-tag-action@v6.2
         with:
           dry_run: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Remove tags & release on fail
         if: failure()
-        uses: dev-drprasad/delete-tag-and-release@v1
+        uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           tag_name: ${{ steps.tag_version_release.outputs.new_tag }}
           delete_release: true
