@@ -26,4 +26,6 @@ jobs:
         run: npm run build
 
       - name: Summarize PR
+        env:
+          PULL_NUMBER: ${{ github.event.pull_request.number }}
         run: npm run summarize-changes
