@@ -27,7 +27,6 @@ jobs:
 
       - name: Summarize PR
         env:
-          REPO_NAME: ${{ env.REPO_NAME }}
-          REPO_OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.repository }}
           PULL_NUMBER: ${{ github.event.pull_request.number }}
         run: npm run summarize-changes

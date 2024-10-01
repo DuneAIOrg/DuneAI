@@ -4,26 +4,30 @@ import { summarizePullRequest } from './orchistrations/SummarizePullRequests'
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
+const pull_number = Number(process.env.PULL_NUMBER!)
+const [owner, repo] = (process.env.REPO ?? '/').split('/')
+
 async function main() {
   const changes = await octokit.rest.pulls.listFiles({
-    repo: process.env.REPO_NAME!,
-    owner: process.env.REPO_OWNER!,
-    pull_number: Number(process.env.PULL_NUMBER!)
+    repo,
+    owner,
+    pull_number
   })
 
   const pull = await octokit.rest.pulls.get({
-    repo: process.env.REPO_NAME!,
-    owner: process.env.REPO_OWNER!,
-    pull_number: Number(process.env.PULL_NUMBER!)
+    repo,
+    owner,
+    pull_number
   })
   if (!pull.data.user) {
     throw new Error('Could not find the user who opened the pull request')
   }
 
   const comments = await octokit.rest.issues.listComments({
-    repo: process.env.REPO_NAME!,
-    owner: process.env.REPO_OWNER!,
-    issue_number: Number(process.env.PULL_NUMBER!)
+    repo,
+    owner,
+    // "All pull requests are an issue, but not all issues are pull requests."
+    issue_number: pull_number
   })
 
   // @ts-ignore
@@ -37,8 +41,8 @@ async function main() {
 
   // Edit the main comment with the summary
   await octokit.rest.issues.updateComment({
-    repo: process.env.REPO_NAME!,
-    owner: process.env.REPO_OWNER!,
+    repo,
+    owner,
     comment_id: comment.id,
     body: (comment.body ?? '').split('# Summary by DuneAI')[0] + `# Summary by DuneAI\n${newData}`
   })
