@@ -25,7 +25,17 @@ async function main() {
   }
 
   console.log('Summarizing pull request...')
-  const newData = await summarizePullRequest(changes)
+  const newData = await summarizePullRequest({
+    CommitCount: pull.data.commits,
+    FilesChangedCount: pull.data.changed_files,
+    ChangedFiles: changes.data.map((d) => ({
+      FileName: d.filename,
+      PreviousFileName: d.previous_filename,
+      ChangeCount: `${d.additions} additions | ${d.deletions} deletions`,
+      ChangeType: d.status,
+      Patch: d.patch,
+    }))
+  })
 
   const existing = (pull.data.body ?? '').split('<!-- end-duneai-summary -->')[1]
 

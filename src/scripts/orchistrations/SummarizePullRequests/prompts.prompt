@@ -1,8 +1,7 @@
 # Structure
+Summarize the changes in the current pull request.
 
-Summarize the current pull request.
-
-Here are the changes in the pull request:
+Here are the changes from the pull request in JSON format:
 {{ context.changes }}
 
 # Edit
