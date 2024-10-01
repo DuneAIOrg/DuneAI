@@ -6,7 +6,7 @@ import { LAMBDA } from "../../constants";
 
 const DEFAULT_DELIMITER = ",";
 
-interface OptionsType {
+export interface OptionsType {
   state?: KeyValuePair;
   context?: KeyValuePair;
   feedback?: string;

@@ -1,0 +1,48 @@
+name: PR DuneAI Summary
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  summarize-pr:
+    name: Summarize PR Using DuneAI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Build DuneAI
+        run: npm run build
+
+      - name: Restore Model Cache
+        id: restore-model-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: models
+          key: ${{ runner.os }}-models
+
+      - name: Summarize PR
+        env:
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_NUMBER: ${{ github.event.pull_request.number }}
+        run: npm run summarize-changes
+
+      - name: Save Model Cache
+        id: save-model-cache
+        uses: actions/cache/save@v4
+        with:
+          path: models
+          key: ${{ steps.restore-model-cache.outputs.cache-primary-key }}

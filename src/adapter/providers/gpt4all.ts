@@ -1,15 +1,27 @@
 import "dotenv/config";
+import {CompletionResult, createCompletion, loadModel} from "gpt4all";
+import {resolve} from "node:path";
+import process from "node:process";
 
-export interface GetCompletionOptions {
-    model: string;
-    host?: string;
-    protocol?: 'http' | 'https';
-    port?: number;
-    max_tokens?: number;
-    temperature?: number;
+export type GetCompletionOptions = {
+  useLocalSession: false;
+  model: string;
+  host?: string;
+  protocol?: 'http' | 'https';
+  port?: number;
+  max_tokens?: number;
+  temperature?: number;
+} | {
+  useLocalSession: true
+  model: string;
+  modelPath?: string;
 }
 
 const getBaseUrl = (options?: GetCompletionOptions) => {
+  if (options && options.useLocalSession) {
+    return
+  }
+
    const url = new URL('http://localhost:4891');
    if (options?.host) {
      url.host = options.host;
@@ -28,9 +40,8 @@ const getBaseUrl = (options?: GetCompletionOptions) => {
 
 const getCompletion = async (content: string, options?: GetCompletionOptions) => {
   const params = {
-    messages: [{ role: "user", content }],
-    max_tokens: options?.max_tokens ?? 512,
-    temperature: options?.temperature ?? 0.24,
+    max_tokens: options?.useLocalSession ? 512 : options?.max_tokens ?? 512,
+    temperature: options?.useLocalSession ? 0.24 : options?.temperature ?? 0.24,
     ...options,
   };
 
@@ -39,20 +50,38 @@ const getCompletion = async (content: string, options?: GetCompletionOptions) =>
 
   const apiBaseUrl = getBaseUrl(options);
 
-  const response = await fetch(apiBaseUrl + 'v1/chat/completions', {
-    method: 'POST',
-    body: JSON.stringify(gpt4allParams),
-  });
+  let completion: CompletionResult
 
-  if (!response.ok) {
-    throw new Error(`GTP4All API error: ${response.statusText}`);
+  if (options?.useLocalSession) {
+    const model = await loadModel(options.model, {
+      nCtx: 32_000,
+      modelPath: resolve(process.cwd(), options.modelPath ?? 'models'),
+    })
+
+    const session = await model.createChatSession({
+      nCtx: 32_000,
+      temperature: gpt4allParams.temperature
+    })
+
+    completion = await createCompletion(session, content, {
+      nCtx: 32_000,
+    })
+  } else {
+    const response = await fetch(apiBaseUrl + 'v1/chat/completions', {
+      method: 'POST',
+      body: JSON.stringify(gpt4allParams),
+    });
+
+    if (!response.ok) {
+      throw new Error(`GTP4All API error: ${response.statusText}`);
+    }
+
+    completion = await response.json();
   }
 
-  const chatCompletion = await response.json();
-
   return {
-    content: chatCompletion?.choices?.[0]?.message?.content ?? '',
-    meta: chatCompletion
+    content: completion?.choices?.[0]?.message?.content ?? '',
+    meta: completion
   };
 };
 

@@ -1,0 +1,13 @@
+# Structure
+Summarize the changes in the current pull request.
+
+Here are the changes from the pull request in JSON format:
+{{ context.changes }}
+
+# Edit
+Edit the final copy of the pull request summary.
+
+Here is the rough draft of the summary:
+{{ context.draft }}
+
+Write the best version of this. Do not repeat content and make the entire summary consistent and clear.

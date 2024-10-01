@@ -175,7 +175,7 @@ const interpolateState = (prompt: PromptType, state: DynamicState): PromptType =
 }
 
 const performCompletion = async(prompt: PromptType) => {
-  return await ask(prompt.content, prompt.adapter);
+  return await ask(prompt.content, prompt.adapter, prompt.model, prompt.options);
 }
 
 const parsePromptsFromFile = (
