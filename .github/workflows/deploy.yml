@@ -23,10 +23,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install Node Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Bump Versions / Push Tags
         id: tag_version
@@ -74,7 +74,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Update Package Version
         uses: jossef/action-set-json-field@v2

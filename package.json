@@ -17,6 +17,10 @@
     "dist",
     "src/skeleton"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DuneAIOrg/DuneAI.git"
+  },
   "scripts": {
     "build": "tsup src/index.ts --minify --dts --format esm,cjs --out-dir dist",
     "start": "node dist/index.js",

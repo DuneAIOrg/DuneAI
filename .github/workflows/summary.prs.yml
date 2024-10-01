@@ -1,6 +1,7 @@
 name: PR DuneAI Summary
 
 permissions:
+  issues: write
   pull-requests: write
 
 on:
@@ -17,17 +18,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Node Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build DuneAI
         run: npm run build
 
       - name: Summarize PR
         env:
-          REPO_NAME: ${{ github.repository }}
+          REPO_NAME: ${{ env.REPO_NAME }}
           REPO_OWNER: ${{ github.repository_owner }}
           PULL_NUMBER: ${{ github.event.pull_request.number }}
         run: npm run summarize-changes
