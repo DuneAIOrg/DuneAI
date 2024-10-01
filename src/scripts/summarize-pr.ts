@@ -31,7 +31,7 @@ async function main() {
   })
 
   // @ts-ignore
-  const comment = comments.data.find((comment) => comment.user?.id === pull.data.user.id)
+  const comment = comments.data[0]
   if (!comment) {
     throw new Error('Could not find the main comment')
   }
