@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
+          always-auth: true
 
       - name: Install Node Dependencies
         run: npm ci
@@ -72,6 +73,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
+          always-auth: true
 
       - name: Install Dependencies
         run: npm ci
