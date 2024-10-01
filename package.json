@@ -11,7 +11,7 @@
     }
   },
   "bin": {
-    "setup": "./cli.js"
+    "setup": "cli.js"
   },
   "files": [
     "dist",
@@ -23,8 +23,7 @@
     "dev": "tsx watch src/index.ts",
     "generate-readme": "tsx src/scripts/GenerateReadme/index.ts",
     "run": "tsx src/skeleton/src/index.ts",
-    "setup": "node cli.js",
-    "postinstall": "npm run setup"
+    "setup": "node cli.js"
   },
   "dependencies": {
     "@types/fs-extra": "^11.0.4",
